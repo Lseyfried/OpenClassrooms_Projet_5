@@ -8,8 +8,8 @@ async function recoverProducts() {
     let data = await requete.json();
     console.log(data);
     for (let i = 0; i < data.length; i++) {
-      document.querySelector(
-        "#items"
+      document.getElementById(
+        "items"
       ).innerHTML += `<a href="./product.html?${data[i]._id}">
     <article>
       <img src="${data[i].imageUrl}" alt="${data[i].altTxt}">
