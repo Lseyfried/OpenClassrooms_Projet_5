@@ -22,6 +22,12 @@ async function recoverProducts() {
       if (fin_url == data[i]._id) {
         document.getElementById("title").innerHTML = data[i].name;
       }
+      if (fin_url == data[i]._id) {
+        document.getElementById("price").innerHTML = data[i].price;
+      }
+      if (fin_url == data[i]._id) {
+        document.getElementById("description").innerHTML = data[i].description;
+      }
     }
   }
 }
