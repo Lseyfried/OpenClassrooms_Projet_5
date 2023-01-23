@@ -8,43 +8,35 @@ async function recoverProducts() {
     let data = await requete.json();
     console.log(data);
   }
-  JSON.parse(localStorage.getItem("produit"));
-  console.log(localStorage);
-  // id = localStorage.getItem("id");
-  // console.log(id);
-  // color = localStorage.getItem("colorChoice");
-  // console.log(color);
-  // quantity = localStorage.getItem("quantityChoice");
-  // console.log(quantity);
-  // let name = localStorage.getItem("name");
-  // image = localStorage.getItem("image");
-  // let alt = localStorage.getItem("alt");
-  // let priceChoice = localStorage.getItem("price");
 
-  document.getElementById(
-    "cart__items"
-  ).innerHTML += `<article class="cart__item" data-id="${id}" data-color="${color}">
-  <div class="cart__item__img">
-    <img src="${image}" alt="${alt}">
-  </div>
-  <div class="cart__item__content">
-    <div class="cart__item__content__description">
-      <h2>${name}</h2>
-      <p>${color}</p>
-      <p> ${priceChoice}€</p>
+  let local = JSON.parse(localStorage.getItem("produit"));
+  for (const element of local) {
+    console.log(element.idValue);
+
+    document.getElementById(
+      "cart__items"
+    ).innerHTML += `<article class="cart__item" data-id="${element.idValue}" data-color="${element.colorValue}">
+    <div class="cart__item__img">
+      <img src="${element.imageValue}" alt="${element.alt}">
     </div>
-    <div class="cart__item__content__settings">
-      <div class="cart__item__content__settings__quantity">
-        <p>Qté : </p>
-        <input type="number" class="itemQuantity" name="itemQuantity" min="1" max="100" value="${quantity}">
+    <div class="cart__item__content">
+      <div class="cart__item__content__description">
+        <h2>${element.nameChoice}</h2>
+        <p>${element.colorValue}</p>
+        <p>${element.priceChoice} €</p>
       </div>
-      <div class="cart__item__content__settings__delete">
-        <p class="deleteItem">Supprimer</p>
+      <div class="cart__item__content__settings">
+        <div class="cart__item__content__settings__quantity">
+          <p>Qté : </p>
+          <input type="number" class="itemQuantity" name="itemQuantity" min="1" max="100" value="${element.quantityValue}">
+        </div>
+        <div class="cart__item__content__settings__delete">
+          <p class="deleteItem">Supprimer</p>
+        </div>
       </div>
     </div>
-  </div>
-</article>`;
-
-  console.log(localStorage);
+  </article>`;
+  }
+  //   console.log(localStorage);
 }
 recoverProducts();
