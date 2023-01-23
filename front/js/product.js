@@ -14,7 +14,6 @@ let end_url = id.get("id");
 let color;
 let quantityForm;
 let bascket = [];
-let cart;
 let colorSelected;
 // alert(end_url);
 async function recoverProducts() {
@@ -36,7 +35,6 @@ async function recoverProducts() {
         document.getElementById("price").innerHTML = data[i].price;
         document.getElementById("description").innerHTML = data[i].description;
         let formValue = document.getElementById("colors");
-        let nameValue = document.getElementById("color-select");
         for (const colorSelected of data[i].colors) {
           // console.log(colorSelected);
           color =
@@ -63,7 +61,17 @@ async function recoverProducts() {
           console.log(quantityValue);
           console.log(idValue);
           console.log(colorValue);
+
+          localStorage.setItem("id", idValue);
+          localStorage.setItem("colorChoice", colorValue);
+          localStorage.setItem("quantityChoice", quantityValue);
+          console.log(localStorage);
         };
+
+        // for (let index = 0; index < localStorage.length; index++) {
+        //   idValue = localStorage.idValue(i);
+        //   quantityValue = localStorage.quantityValue(i);
+        //   colorValue = localStorage.colorValue(i);
       }
     }
   }
