@@ -11,6 +11,11 @@
 // }
 let id = new URLSearchParams(window.location.search);
 let end_url = id.get("id");
+let color;
+let quantityForm;
+let bascket = [];
+let cart;
+let colorSelected;
 // alert(end_url);
 async function recoverProducts() {
   const requete = await fetch("http://localhost:3000/api/products", {
@@ -23,18 +28,42 @@ async function recoverProducts() {
     console.log(data);
     for (let i = 0; i < data.length; i++) {
       if (end_url == data[i]._id) {
-        document.getElementsByClassName(
+        let image = (document.getElementsByClassName(
           "item__img"
-        )[0].innerHTML = `<img src="${data[i].imageUrl}" alt="${data[i].altTxt}>`;
-        // alert(image);
+        )[0].innerHTML = `<img src="${data[i].imageUrl}" alt="${data[i].altTxt}>`);
+        // console.log(image);
         document.getElementById("title").innerHTML = data[i].name;
         document.getElementById("price").innerHTML = data[i].price;
         document.getElementById("description").innerHTML = data[i].description;
         let formValue = document.getElementById("colors");
+        let nameValue = document.getElementById("color-select");
         for (const colorSelected of data[i].colors) {
-          console.log(colorSelected);
-          formValue.innerHTML += `<option value=${colorSelected}>${colorSelected}</option>`;
+          // console.log(colorSelected);
+          color =
+            formValue.innerHTML += `<option value=${colorSelected}>${colorSelected}</option>`;
         }
+
+        let quantity = document.getElementById("quantity");
+        // console.log(quantity);
+        // const total = bascket.push(data[i]._id, color, quantity);
+        // localStorage.removeItem("data[i].colors");
+        // localStorage.setItem("id", data[i]._id);
+        // localStorage.setItem("quantity", quantity);
+        // localStorage.setItem("color", color);
+        // console.log(localStorage);
+        const id = end_url;
+        // console.log(color);
+        bascket.push(quantity, id, color);
+
+        let btn = document.getElementById("addToCart");
+        btn.onclick = () => {
+          let idValue = id;
+          let quantityValue = quantity.value;
+          let colorValue = formValue.value;
+          console.log(quantityValue);
+          console.log(idValue);
+          console.log(colorValue);
+        };
       }
     }
   }
