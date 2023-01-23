@@ -31,8 +31,9 @@ async function recoverProducts() {
           "item__img"
         )[0].innerHTML = `<img src="${data[i].imageUrl}" alt="${data[i].altTxt}>`);
         // console.log(image);
-        document.getElementById("title").innerHTML = data[i].name;
-        document.getElementById("price").innerHTML = data[i].price;
+        let name = (document.getElementById("title").innerHTML = data[i].name);
+        let price = (document.getElementById("price").innerHTML =
+          data[i].price);
         document.getElementById("description").innerHTML = data[i].description;
         let formValue = document.getElementById("colors");
         for (const colorSelected of data[i].colors) {
@@ -58,13 +59,24 @@ async function recoverProducts() {
           let idValue = id;
           let quantityValue = quantity.value;
           let colorValue = formValue.value;
+          let imageValue = data[i].imageUrl;
+          let priceChoice = price;
+          let nameChoice = name;
+          let alt = data[i].altTxt;
           console.log(quantityValue);
           console.log(idValue);
           console.log(colorValue);
+          console.log(imageValue);
+          console.log(priceChoice);
+          console.log(alt);
 
           localStorage.setItem("id", idValue);
           localStorage.setItem("colorChoice", colorValue);
           localStorage.setItem("quantityChoice", quantityValue);
+          localStorage.setItem("image", imageValue);
+          localStorage.setItem("price", priceChoice);
+          localStorage.setItem("name", nameChoice);
+          localStorage.setItem("alt", alt);
           console.log(localStorage);
         };
 

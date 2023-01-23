@@ -14,17 +14,21 @@ async function recoverProducts() {
   console.log(color);
   quantity = localStorage.getItem("quantityChoice");
   console.log(quantity);
+  let name = localStorage.getItem("name");
+  image = localStorage.getItem("image");
+  let alt = localStorage.getItem("alt");
+  let priceChoice = localStorage.getItem("price");
   document.getElementById(
     "cart__items"
   ).innerHTML += `<article class="cart__item" data-id="${id}" data-color="${color}">
   <div class="cart__item__img">
-    <img src="" alt="Photographie d'un canapé">
+    <img src="${image}" alt="${alt}">
   </div>
   <div class="cart__item__content">
     <div class="cart__item__content__description">
-      <h2>Nom du produit</h2>
+      <h2>${name}</h2>
       <p>${color}</p>
-      <p> €</p>
+      <p> ${priceChoice}€</p>
     </div>
     <div class="cart__item__content__settings">
       <div class="cart__item__content__settings__quantity">
