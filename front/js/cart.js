@@ -41,5 +41,11 @@ async function recoverProducts() {
     </div>
   </div>
 </article>`;
+  let btnDeleting = document.getElementsByClassName("deleteitem");
+  console.log(btnDeleting);
+  btnDeleting.onclick = () => {
+    localStorage.clear();
+    console.log(localStorage);
+  };
 }
 recoverProducts();

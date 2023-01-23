@@ -1,19 +1,8 @@
-// let position = window.location.href.indexOf("=");
-// alert(position);
-// let id;
-// let end_url;
-// if (position != -1) {
-//   id = "";
-//   end_url = window.location.href.substring(position + 1);
-// alert(fin_url);
-// fin_url = fin_url.replace(/-/g, " ");
-// alert(fin_url);
-// }
 let id = new URLSearchParams(window.location.search);
 let end_url = id.get("id");
 let color;
-let quantityForm;
-let bascket = [];
+// let quantityForm;
+// let bascket = [];
 let colorSelected;
 // alert(end_url);
 async function recoverProducts() {
@@ -29,7 +18,7 @@ async function recoverProducts() {
       if (end_url == data[i]._id) {
         let image = (document.getElementsByClassName(
           "item__img"
-        )[0].innerHTML = `<img src="${data[i].imageUrl}" alt="${data[i].altTxt}>`);
+        )[0].innerHTML = `<img src="${data[i].imageUrl}" alt="${data[i].altTxt}">`);
         // console.log(image);
         let name = (document.getElementById("title").innerHTML = data[i].name);
         let price = (document.getElementById("price").innerHTML =
@@ -43,20 +32,10 @@ async function recoverProducts() {
         }
 
         let quantity = document.getElementById("quantity");
-        // console.log(quantity);
-        // const total = bascket.push(data[i]._id, color, quantity);
-        // localStorage.removeItem("data[i].colors");
-        // localStorage.setItem("id", data[i]._id);
-        // localStorage.setItem("quantity", quantity);
-        // localStorage.setItem("color", color);
-        // console.log(localStorage);
-        const id = end_url;
-        // console.log(color);
-        bascket.push(quantity, id, color);
 
         let btn = document.getElementById("addToCart");
         btn.onclick = () => {
-          let idValue = id;
+          let idValue = end_url;
           let quantityValue = quantity.value;
           let colorValue = formValue.value;
           let imageValue = data[i].imageUrl;
@@ -78,6 +57,7 @@ async function recoverProducts() {
           localStorage.setItem("name", nameChoice);
           localStorage.setItem("alt", alt);
           console.log(localStorage);
+          window.location.href = "cart.html";
         };
 
         // for (let index = 0; index < localStorage.length; index++) {
