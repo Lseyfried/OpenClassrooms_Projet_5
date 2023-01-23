@@ -8,16 +8,19 @@ async function recoverProducts() {
     let data = await requete.json();
     console.log(data);
   }
-  id = localStorage.getItem("id");
-  console.log(id);
-  color = localStorage.getItem("colorChoice");
-  console.log(color);
-  quantity = localStorage.getItem("quantityChoice");
-  console.log(quantity);
-  let name = localStorage.getItem("name");
-  image = localStorage.getItem("image");
-  let alt = localStorage.getItem("alt");
-  let priceChoice = localStorage.getItem("price");
+  JSON.parse(localStorage.getItem("produit"));
+  console.log(localStorage);
+  // id = localStorage.getItem("id");
+  // console.log(id);
+  // color = localStorage.getItem("colorChoice");
+  // console.log(color);
+  // quantity = localStorage.getItem("quantityChoice");
+  // console.log(quantity);
+  // let name = localStorage.getItem("name");
+  // image = localStorage.getItem("image");
+  // let alt = localStorage.getItem("alt");
+  // let priceChoice = localStorage.getItem("price");
+
   document.getElementById(
     "cart__items"
   ).innerHTML += `<article class="cart__item" data-id="${id}" data-color="${color}">
@@ -41,11 +44,7 @@ async function recoverProducts() {
     </div>
   </div>
 </article>`;
-  let btnDeleting = document.getElementsByClassName("deleteitem");
-  console.log(btnDeleting);
-  btnDeleting.onclick = () => {
-    localStorage.clear();
-    console.log(localStorage);
-  };
+
+  console.log(localStorage);
 }
 recoverProducts();

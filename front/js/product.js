@@ -1,9 +1,17 @@
-let id = new URLSearchParams(window.location.search);
-let end_url = id.get("id");
+let end_url = new URLSearchParams(window.location.search).get("id");
+// let end_url = id.get("id");
 let color;
 // let quantityForm;
-// let bascket = [];
+let bascket = [];
 let colorSelected;
+let idValue;
+let quantityValue;
+let colorValue;
+let imageValue;
+let priceChoice;
+let nameChoice;
+let alt;
+let btn;
 // alert(end_url);
 async function recoverProducts() {
   const requete = await fetch("http://localhost:3000/api/products", {
@@ -32,38 +40,56 @@ async function recoverProducts() {
         }
 
         let quantity = document.getElementById("quantity");
+        // let produitInformations = {
+        //   idValue: end_url,
+        //   quantityValue: quantity.value,
+        //   colorValue: formValue.value,
+        //   imageValue: data[i].imageUrl,
+        //   priceChoice: price,
+        //   nameChoice: name,
+        //   alt: data[i].altTxt,
+        // };
+        btn = document
+          .getElementById("addToCart")
+          .addEventListener("click", (e) => {
+            e.defaultPrevented;
+            idValue = end_url;
+            quantityValue = quantity.value;
+            colorValue = formValue.value;
+            imageValue = data[i].imageUrl;
+            priceChoice = price;
+            nameChoice = name;
+            alt = data[i].altTxt;
 
-        let btn = document.getElementById("addToCart");
-        btn.onclick = () => {
-          let idValue = end_url;
-          let quantityValue = quantity.value;
-          let colorValue = formValue.value;
-          let imageValue = data[i].imageUrl;
-          let priceChoice = price;
-          let nameChoice = name;
-          let alt = data[i].altTxt;
-          console.log(quantityValue);
-          console.log(idValue);
-          console.log(colorValue);
-          console.log(imageValue);
-          console.log(priceChoice);
-          console.log(alt);
+            bascket.push(idValue);
+            bascket.push(quantityValue);
+            bascket.push(colorValue);
+            bascket.push(imageValue);
+            bascket.push(priceChoice);
+            bascket.push(nameChoice);
+            bascket.push(alt);
+            // localStorage.setItem("id", idValue);
+            // localStorage.setItem("colorChoice", colorValue);
+            // localStorage.setItem("quantityChoice", quantityValue);
+            // localStorage.setItem("image", imageValue);
+            // localStorage.setItem("price", priceChoice);
+            // localStorage.setItem("name", nameChoice);
+            // localStorage.setItem("alt", alt);
 
-          localStorage.setItem("id", idValue);
-          localStorage.setItem("colorChoice", colorValue);
-          localStorage.setItem("quantityChoice", quantityValue);
-          localStorage.setItem("image", imageValue);
-          localStorage.setItem("price", priceChoice);
-          localStorage.setItem("name", nameChoice);
-          localStorage.setItem("alt", alt);
-          console.log(localStorage);
-          window.location.href = "cart.html";
-        };
+            // if (bascket) {
+            //   bascket.push(btn);
+            //   localStorage.setItem("produit", bascket);
+            // } else {
+            //   bascket = [];
+            //   bascket.push(btn);
+            //   localStorage.setItem("produit", bascket);
+            //   console.log(localStorage);
+            // }
 
-        // for (let index = 0; index < localStorage.length; index++) {
-        //   idValue = localStorage.idValue(i);
-        //   quantityValue = localStorage.quantityValue(i);
-        //   colorValue = localStorage.colorValue(i);
+            localStorage.setItem("produit", JSON.stringify(bascket));
+            console.log(localStorage);
+            console.log(bascket);
+          });
       }
     }
   }
