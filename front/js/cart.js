@@ -11,8 +11,6 @@ async function recoverProducts() {
 
   let local = JSON.parse(localStorage.getItem("produit"));
   for (const element of local) {
-    console.log(element.idValue);
-
     document.getElementById(
       "cart__items"
     ).innerHTML += `<article class="cart__item" data-id="${element.idValue}" data-color="${element.colorValue}">

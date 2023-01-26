@@ -1,20 +1,21 @@
+// recupere id de la page
 let end_url = new URLSearchParams(window.location.search).get("id");
-// let end_url = id.get("id");
+//déclarer variables locales
 let color;
-// let quantityForm;
-// let bascket = [];
 let colorSelected;
-let idValue;
+let id;
 let quantityValue;
 let colorValue;
 let imageValue;
 let priceChoice;
 let nameChoice;
-let bascket;
 let alt;
 let btn;
-let produitInformations;
-// alert(end_url);
+let bascket = [];
+
+let foundProduct;
+let iterator;
+//recuperer l'API
 async function recoverProducts() {
   const requete = await fetch("http://localhost:3000/api/products", {
     method: "GET",
@@ -26,94 +27,99 @@ async function recoverProducts() {
     console.log(data);
     for (let i = 0; i < data.length; i++) {
       if (end_url == data[i]._id) {
+        //charge l'image de la page
         let image = (document.getElementsByClassName(
           "item__img"
         )[0].innerHTML = `<img src="${data[i].imageUrl}" alt="${data[i].altTxt}">`);
-        // console.log(image);
+        // charge le nom et le prix de la page
         let name = (document.getElementById("title").innerHTML = data[i].name);
         let price = (document.getElementById("price").innerHTML =
           data[i].price);
         document.getElementById("description").innerHTML = data[i].description;
-        let formValue = document.getElementById("colors"); //selection de couleur
+        //charge les options couleurs de la page
+        let formValue = document.getElementById("colors");
         for (const colorSelected of data[i].colors) {
           //renvoie toutes les couleurs du tableau colors
-          // console.log(colorSelected);
           color =
             formValue.innerHTML += `<option value=${colorSelected}>${colorSelected}</option>`;
         }
 
-        let quantity = document.getElementById("quantity"); //quantité de canapé
-        // let produitInformations = {
-        //   idValue: end_url,
-        //   quantityValue: quantity.value,
-        //   colorValue: formValue.value,
-        //   imageValue: data[i].imageUrl,
-        //   priceChoice: price,
-        //   nameChoice: name,
-        //   alt: data[i].altTxt,
-        // };
+        let quantity = document.getElementById("quantity");
+
+        function addBascket(array, products) {
+          if (array.length > 0) {
+            for (let x = 0; x < array.length; x++) {
+              if (
+                array[x].id !== end_url ||
+                array[x].color !== formValue.value
+              ) {
+                array.push(products);
+              } else {
+                array[0].quantity = quantity.value;
+                array[0].color = formValue.value;
+              }
+            }
+          } else {
+            array.push(products);
+          }
+        }
+
+        function getStorage(array) {
+          localStorage.setItem("produit", JSON.stringify(array));
+        }
+
+        function compareStorage() {
+          if (bascket.length > 0) {
+            let q = JSON.parse(localStorage.getItem("produit"));
+            for (let index = 0; index < q.length; index++) {
+              if (
+                q[index].id === end_url &&
+                q[index].color === formValue.value
+              ) {
+                console.log("produit identique");
+                break;
+              } else {
+                console.log("probleme");
+              }
+            }
+          }
+        }
 
         btn = document //variable btn contient élément du tableau à exporter dans le localStorage
           .getElementById("addToCart")
-          .addEventListener("click", (e) => {
-            e.defaultPrevented;
-            idValue = end_url;
-            quantityValue = quantity.value;
-            colorValue = formValue.value;
-            imageValue = data[i].imageUrl;
-            priceChoice = price;
-            nameChoice = name;
-            alt = data[i].altTxt;
-
-            // bascket.push(idValue);
-            // bascket.push(quantityValue);
-            // bascket.push(colorValue);
-            // bascket.push(imageValue);
-            // bascket.push(priceChoice);
-            // bascket.push(nameChoice);
-            // bascket.push(alt);
-            // localStorage.setItem("id", idValue);
-            // localStorage.setItem("colorChoice", colorValue);
-            // localStorage.setItem("quantityChoice", quantityValue);
-            // localStorage.setItem("image", imageValue);
-            // localStorage.setItem("price", priceChoice);
-            // localStorage.setItem("name", nameChoice);
-            // localStorage.setItem("alt", alt);
-
-            // if (bascket) {
-            //   bascket.push(btn);
-            //   localStorage.setItem("produit", bascket);
-            // } else {
-            //   bascket = [];
-            //   bascket.push(btn);
-            //   localStorage.setItem("produit", bascket);
-            //   console.log(localStorage);
-            //
-            produitInformations = {
-              //recupérer informations dans une seule variable
-              idValue: end_url,
-              quantityValue: quantity.value,
-              colorValue: formValue.value,
-              imageValue: data[i].imageUrl,
-              priceChoice: price,
-              nameChoice: name,
+          .addEventListener("click", () => {
+            // e.preventDefault;
+            let produitInformations = {
+              id: end_url,
+              quantity: Number(quantity.value),
+              color: formValue.value,
+              image: data[i].imageUrl,
+              price: price,
+              name: name,
               alt: data[i].altTxt,
             };
-            console.log(produitInformations);
-            bascket = JSON.parse(localStorage.getItem("produit"));
-            // console.log(bascket);
-            if (bascket) {
-              bascket.push(produitInformations);
-              localStorage.setItem("produit", JSON.stringify(bascket));
-              // console.log(bascket);
-            } else {
-              bascket = [];
-              bascket.push(produitInformations);
-              localStorage.setItem("produit", JSON.stringify(bascket));
+            compareStorage();
+            addBascket(bascket, produitInformations);
+            getStorage(bascket);
 
-              console.log(bascket);
-            }
-            window.location.href = "cart.html";
+            // giveQuantity(bascket, name, formValue.value);
+            // saveStorage(bascket);
+            // getStorage(bascket);
+            // productsFound(bascket, formValue.value);
+
+            // foundArray(bascket);
+
+            // if (bascket[index].id) {
+            //   if (quantity.value === 1) {
+            //     bascket[index].quantity === Number(quantity.value);
+            //   } else if (quantity.value > 1) {
+            //     bascket[index].quantity++;
+            //   }
+            // } else {
+            //   console.log("pas de tableau");
+            // }
+
+            console.log(bascket);
           });
       }
     }
