@@ -54,13 +54,12 @@ async function recoverProducts() {
                 array[x].color !== formValue.value
               ) {
                 array.push(products);
-              } else {
-                array[0].quantity = quantity.value;
-                array[0].color = formValue.value;
+                localStorage.setItem("produit", JSON.stringify(array));
               }
             }
           } else {
             array.push(products);
+            localStorage.setItem("produit", JSON.stringify(array));
           }
         }
 
@@ -76,7 +75,8 @@ async function recoverProducts() {
                 q[index].id === end_url &&
                 q[index].color === formValue.value
               ) {
-                console.log("produit identique");
+                bascket[0].quantity = quantity.value;
+                bascket[0].color = formValue.value;
                 break;
               } else {
                 console.log("probleme");
