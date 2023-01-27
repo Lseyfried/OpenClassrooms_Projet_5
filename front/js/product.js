@@ -63,11 +63,7 @@ async function recoverProducts() {
                 if (b[x].name === name && b[x].color !== formValue.value) {
                   b[x].quantity += Number(quantity.value);
                   array.push(products);
-                  return getStorage(bascket) + 1;
-                  // } else if (b[x].id !== id) {
-                  //   array.push(products);
-                  //   return getStorage(bascket);
-                  // }
+                  return getStorage(bascket);
                 }
               }
             }
@@ -75,7 +71,7 @@ async function recoverProducts() {
             for (let a = 0; a < b.length; a++) {
               if (b[a].id !== end_url) {
                 array.push(products);
-                return getStorage(bascket);
+                return localStorage.setItem("produit", JSON.stringify(array));
               }
             }
           } else {
