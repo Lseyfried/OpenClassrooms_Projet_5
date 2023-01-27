@@ -47,42 +47,45 @@ async function recoverProducts() {
         let quantity = document.getElementById("quantity");
 
         function addBascket(array, products) {
-          if (array.length > 0) {
-            for (let x = 0; x < array.length; x++) {
-              if (
-                array[x].id !== end_url ||
-                array[x].color !== formValue.value
-              ) {
+          const b = JSON.parse(localStorage.getItem("produit"));
+          if (localStorage.length > 0 && array.length > 0) {
+            for (let x = 0; x < b.length; x++) {
+              for (let index = 0; index < array.length; index++) {
+                if (
+                  b[x].name === name &&
+                  b[x].color === formValue.value &&
+                  b[x].id === end_url
+                ) {
+                  b[x].quantity += Number(quantity.value);
+                  array[index].quantity += Number(quantity.value);
+                  return getStorage(bascket);
+                }
+                if (b[x].name === name && b[x].color !== formValue.value) {
+                  b[x].quantity += Number(quantity.value);
+                  array.push(products);
+                  return getStorage(bascket) + 1;
+                  // } else if (b[x].id !== id) {
+                  //   array.push(products);
+                  //   return getStorage(bascket);
+                  // }
+                }
+              }
+            }
+          } else if (localStorage.length > 0 || !array) {
+            for (let a = 0; a < b.length; a++) {
+              if (b[a].id !== end_url) {
                 array.push(products);
-                localStorage.setItem("produit", JSON.stringify(array));
+                return getStorage(bascket);
               }
             }
           } else {
             array.push(products);
-            localStorage.setItem("produit", JSON.stringify(array));
+            getStorage(bascket);
           }
         }
 
         function getStorage(array) {
           localStorage.setItem("produit", JSON.stringify(array));
-        }
-
-        function compareStorage() {
-          if (bascket.length > 0) {
-            let q = JSON.parse(localStorage.getItem("produit"));
-            for (let index = 0; index < q.length; index++) {
-              if (
-                q[index].id === end_url &&
-                q[index].color === formValue.value
-              ) {
-                bascket[0].quantity = quantity.value;
-                bascket[0].color = formValue.value;
-                break;
-              } else {
-                console.log("probleme");
-              }
-            }
-          }
         }
 
         btn = document //variable btn contient élément du tableau à exporter dans le localStorage
@@ -98,26 +101,9 @@ async function recoverProducts() {
               name: name,
               alt: data[i].altTxt,
             };
-            compareStorage();
+
+            // compareStorage();
             addBascket(bascket, produitInformations);
-            getStorage(bascket);
-
-            // giveQuantity(bascket, name, formValue.value);
-            // saveStorage(bascket);
-            // getStorage(bascket);
-            // productsFound(bascket, formValue.value);
-
-            // foundArray(bascket);
-
-            // if (bascket[index].id) {
-            //   if (quantity.value === 1) {
-            //     bascket[index].quantity === Number(quantity.value);
-            //   } else if (quantity.value > 1) {
-            //     bascket[index].quantity++;
-            //   }
-            // } else {
-            //   console.log("pas de tableau");
-            // }
 
             console.log(bascket);
           });
