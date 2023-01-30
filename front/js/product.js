@@ -1,111 +1,77 @@
-// recupere id de la page
-let end_url = new URLSearchParams(window.location.search).get("id");
-//déclarer variables locales
-let color;
-let colorSelected;
-let id;
-let quantityValue;
-let colorValue;
-let imageValue;
-let priceChoice;
-let nameChoice;
-let alt;
-let btn;
-let bascket = [];
-
-let foundProduct;
-let iterator;
-//recuperer l'API
-async function recoverProducts() {
-  const requete = await fetch("http://localhost:3000/api/products", {
+let formValue, quantity;
+// Recupere id de la page.
+const end_url = new URLSearchParams(window.location.search).get("id");
+//On recupérer le produit par rapport à l'id de la page.
+recoverProducts(`http://localhost:3000/api/products/${end_url}`);
+async function recoverProducts(API) {
+  const response = await fetch(API, {
+    //utilser l'id avec fetch pour un seul produit
     method: "GET",
   });
-  if (!requete.ok) {
+  if (!response.ok) {
     alert("Un Problème est survenu.");
   } else {
-    let data = await requete.json();
+    data = await response.json();
     console.log(data);
-    for (let i = 0; i < data.length; i++) {
-      if (end_url == data[i]._id) {
-        //charge l'image de la page
-        let image = (document.getElementsByClassName(
-          "item__img"
-        )[0].innerHTML = `<img src="${data[i].imageUrl}" alt="${data[i].altTxt}">`);
-        // charge le nom et le prix de la page
-        let name = (document.getElementById("title").innerHTML = data[i].name);
-        let price = (document.getElementById("price").innerHTML =
-          data[i].price);
-        document.getElementById("description").innerHTML = data[i].description;
-        //charge les options couleurs de la page
-        let formValue = document.getElementById("colors");
-        for (const colorSelected of data[i].colors) {
-          //renvoie toutes les couleurs du tableau colors
-          color =
-            formValue.innerHTML += `<option value=${colorSelected}>${colorSelected}</option>`;
-        }
-
-        let quantity = document.getElementById("quantity");
-
-        function addBascket(array, products) {
-          const b = JSON.parse(localStorage.getItem("produit"));
-          if (localStorage.length > 0 && array.length > 0) {
-            for (let x = 0; x < b.length; x++) {
-              for (let index = 0; index < array.length; index++) {
-                if (
-                  b[x].name === name &&
-                  b[x].color === formValue.value &&
-                  b[x].id === end_url
-                ) {
-                  b[x].quantity += Number(quantity.value);
-                  array[index].quantity += Number(quantity.value);
-                  return getStorage(bascket);
-                }
-                if (b[x].name === name && b[x].color !== formValue.value) {
-                  b[x].quantity += Number(quantity.value);
-                  array.push(products);
-                  return getStorage(bascket);
-                }
-              }
-            }
-          } else if (localStorage.length > 0 || !array) {
-            for (let a = 0; a < b.length; a++) {
-              if (b[a].id !== end_url) {
-                array.push(products);
-                return localStorage.setItem("produit", JSON.stringify(array));
-              }
-            }
-          } else {
-            array.push(products);
-            getStorage(bascket);
-          }
-        }
-
-        function getStorage(array) {
-          localStorage.setItem("produit", JSON.stringify(array));
-        }
-
-        btn = document //variable btn contient élément du tableau à exporter dans le localStorage
-          .getElementById("addToCart")
-          .addEventListener("click", () => {
-            // e.preventDefault;
-            let produitInformations = {
-              id: end_url,
-              quantity: Number(quantity.value),
-              color: formValue.value,
-              image: data[i].imageUrl,
-              price: price,
-              name: name,
-              alt: data[i].altTxt,
-            };
-
-            // compareStorage();
-            addBascket(bascket, produitInformations);
-
-            console.log(bascket);
-          });
-      }
-    }
+    displayProduct();
   }
 }
 
-recoverProducts();
+function displayProduct() {
+  let image = document.querySelector(".item__img");
+  image.innerHTML = `<img src="${data.imageUrl}" alt="${data.altTxt}">`;
+  document.getElementById("title").textContent = data.name;
+  document.getElementById("price").textContent = data.price;
+  document.getElementById("description").textContent = data.description;
+  formValue = document.getElementById("colors");
+  for (const colorSelected of data.colors) {
+    formValue.innerHTML += `<option value=${colorSelected}>${colorSelected}</option>`;
+  }
+  quantity = document.getElementById("quantity");
+  document.getElementById("addToCart").addEventListener("click", () => {
+    let produitInformations = {
+      id: end_url,
+      quantity: Number(quantity.value),
+      color: formValue.value,
+    };
+    console.log(produitInformations);
+    addProductToBasket(produitInformations);
+    window.location.href = "cart.html";
+  });
+}
+
+//charge l'image de la page //displayProduct tous les éléments du DOM
+
+function addProductToBasket(products) {
+  // en dehors du bloc
+  let cart = JSON.parse(localStorage.getItem("basket"));
+
+  console.log(cart);
+  if (cart !== null) {
+    for (let index = 0; index < cart.length; index++) {
+      console.log(cart[index]);
+      if (cart[index].color === formValue.value && cart[index].id === end_url) {
+        cart[index].quantity += Number(quantity.value); // inutile
+        return getStorage(cart);
+      } else if (
+        cart[index].id === end_url &&
+        cart[index].color !== formValue.value
+      ) {
+        cart.push(products);
+        return getStorage(cart);
+      }
+      if (cart[index].color !== formValue.value && cart[index].id !== end_url) {
+        cart.push(products);
+        return getStorage(cart);
+      }
+    }
+  } else {
+    cart = [];
+    cart.push(products);
+    getStorage(cart);
+  }
+}
+
+function getStorage(array) {
+  localStorage.setItem("basket", JSON.stringify(array));
+}
