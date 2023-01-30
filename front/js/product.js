@@ -3,9 +3,9 @@ let formValue, quantity;
 const end_url = new URLSearchParams(window.location.search).get("id");
 //On recupérer le produit par rapport à l'id de la page.
 recoverProducts(`http://localhost:3000/api/products/${end_url}`);
+
 async function recoverProducts(API) {
   const response = await fetch(API, {
-    //utilser l'id avec fetch pour un seul produit
     method: "GET",
   });
   if (!response.ok) {
@@ -40,10 +40,7 @@ function displayProduct() {
   });
 }
 
-//charge l'image de la page //displayProduct tous les éléments du DOM
-
 function addProductToBasket(products) {
-  // en dehors du bloc
   let cart = JSON.parse(localStorage.getItem("basket"));
 
   console.log(cart);
@@ -51,7 +48,7 @@ function addProductToBasket(products) {
     for (let index = 0; index < cart.length; index++) {
       console.log(cart[index]);
       if (cart[index].color === formValue.value && cart[index].id === end_url) {
-        cart[index].quantity += Number(quantity.value); // inutile
+        cart[index].quantity += Number(quantity.value);
         return getStorage(cart);
       } else if (
         cart[index].id === end_url &&
