@@ -15,7 +15,7 @@ for (let index = 0; index < basket.length; index++) {
     } else {
       let arrayID = await basketId.json();
       Promise.all([basketColor, basketQuantity, arrayID]).then((values) => {
-        console.log(values);
+        // console.log(basket[index].quantity);
         let cart = document.getElementById("cart__items");
         cart.innerHTML += `<article class="cart__item" data-id="${values[2]._id}" data-color="${values[0]}">
           <div class="cart__item__img">
@@ -38,7 +38,27 @@ for (let index = 0; index < basket.length; index++) {
             </div>
           </div>
         </article>`;
+        // Array.from(values[1]).map((option) => option.value);
+        // console.log(values[1]);
+        //faire totaux. mettre dans un tableau ?
+        let deletedButton = document.querySelector(".itemQuantity");
+        deletedButton.addEventListener("change", (e) => {
+          if (e.currentTarget.value) {
+            let basketBis = JSON.parse(localStorage.getItem("basket"));
+            if (basketBis !== null) {
+              basketBis.push(Number(e.currentTarget.value));
+              console.log(basketBis);
+            }
+          }
+        });
       });
     }
   }
 }
+// function additionQuantity(...nombres) {
+//   let resultat = 0;
+//   nombres.forEach((nombre) => {
+//     resultat += nombre;
+//     console.log(resultat);
+//   });
+// }
