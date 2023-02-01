@@ -41,27 +41,36 @@ for (let index = 0; index < basket.length; index++) {
         // Array.from(values[1]).map((option) => option.value);
         // console.log(values[1]);
         //faire totaux. mettre dans un tableau ?
-        let deletedButton = document.querySelectorAll(".itemQuantity");
-        for (let index = 0; index < deletedButton.length; index++) {
-          deletedButton[index].addEventListener("change", (e) => {
-            const closestElement = deletedButton[index].closest("article");
-            console.log(closestElement);
-            console.log(closestElement.dataset["color"]);
-            console.log(closestElement.dataset["id"]);
-            console.log(e.currentTarget.value);
+        let changeButton = document.querySelectorAll(".itemQuantity");
+        for (let index = 0; index < changeButton.length; index++) {
+          changeButton[index].addEventListener("change", (e) => {
+            const closestElement = changeButton[index].closest("article");
             if (
               closestElement.dataset["id"] === basket[index].id &&
               closestElement.dataset["color"] === basket[index].color
             ) {
               basket[index].quantity = Number(e.currentTarget.value);
-              console.log(basket);
+              // console.log(basket);
               localStorage.setItem("basket", JSON.stringify(basket));
-              // console.log(localStorage);
             }
-
-            //   basketBis.push(Number(e.currentTarget.value));
-            //   console.log(basketBis);
-            // }
+          });
+        }
+        let deletedButton = document.querySelectorAll(".deleteItem");
+        for (let index = 0; index < deletedButton.length; index++) {
+          deletedButton[index].addEventListener("click", (e) => {
+            const closestDeleted = deletedButton[index].closest("article");
+            closestDeleted.remove();
+            if (
+              closestDeleted.dataset["id"] === basket[index].id &&
+              closestDeleted.dataset["color"] === basket[index].color
+            ) {
+              delete basket[index];
+              let basketReforme = basket.filter(
+                (value) => Object.keys(value).length !== 0
+              );
+              localStorage.setItem("basket", JSON.stringify(basketReforme));
+              window.location.reload();
+            }
           });
         }
       });
