@@ -53,7 +53,10 @@ for (let index = 0; index < basket.length; index++) {
               closestElement.dataset["id"] === basket[index].id &&
               closestElement.dataset["color"] === basket[index].color
             ) {
-              basket[index].quantity = e.currentTarget.value;
+              basket[index].quantity = Number(e.currentTarget.value);
+              console.log(basket);
+              localStorage.setItem("basket", JSON.stringify(basket));
+              // console.log(localStorage);
             }
 
             //   basketBis.push(Number(e.currentTarget.value));
