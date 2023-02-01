@@ -41,16 +41,26 @@ for (let index = 0; index < basket.length; index++) {
         // Array.from(values[1]).map((option) => option.value);
         // console.log(values[1]);
         //faire totaux. mettre dans un tableau ?
-        let deletedButton = document.querySelector(".itemQuantity");
-        deletedButton.addEventListener("change", (e) => {
-          if (e.currentTarget.value) {
-            let basketBis = JSON.parse(localStorage.getItem("basket"));
-            if (basketBis !== null) {
-              basketBis.push(Number(e.currentTarget.value));
-              console.log(basketBis);
+        let deletedButton = document.querySelectorAll(".itemQuantity");
+        for (let index = 0; index < deletedButton.length; index++) {
+          deletedButton[index].addEventListener("change", (e) => {
+            const closestElement = deletedButton[index].closest("article");
+            console.log(closestElement);
+            console.log(closestElement.dataset["color"]);
+            console.log(closestElement.dataset["id"]);
+            console.log(e.currentTarget.value);
+            if (
+              closestElement.dataset["id"] === basket[index].id &&
+              closestElement.dataset["color"] === basket[index].color
+            ) {
+              basket[index].quantity = e.currentTarget.value;
             }
-          }
-        });
+
+            //   basketBis.push(Number(e.currentTarget.value));
+            //   console.log(basketBis);
+            // }
+          });
+        }
       });
     }
   }
