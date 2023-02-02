@@ -38,9 +38,7 @@ for (let index = 0; index < basket.length; index++) {
             </div>
           </div>
         </article>`;
-        // Array.from(values[1]).map((option) => option.value);
-        // console.log(values[1]);
-        //faire totaux. mettre dans un tableau ?
+        // change la quantité
         let changeButton = document.querySelectorAll(".itemQuantity");
         for (let index = 0; index < changeButton.length; index++) {
           changeButton[index].addEventListener("change", (e) => {
@@ -52,9 +50,11 @@ for (let index = 0; index < basket.length; index++) {
               basket[index].quantity = Number(e.currentTarget.value);
               // console.log(basket);
               localStorage.setItem("basket", JSON.stringify(basket));
+              window.location.reload();
             }
           });
         }
+        //supprimer un article
         let deletedButton = document.querySelectorAll(".deleteItem");
         for (let index = 0; index < deletedButton.length; index++) {
           deletedButton[index].addEventListener("click", (e) => {
@@ -73,10 +73,69 @@ for (let index = 0; index < basket.length; index++) {
             }
           });
         }
+        //total du prix
+        let priceTotal = document.getElementById("totalPrice");
+        const idArray = Object.values(arrayID);
+        // console.log(idArray[3]);
+        let val2 = idArray.reduce((previousValue, currentValue) => {
+          return {
+            price: Number(previousValue) + Number(currentValue),
+          };
+        });
+        console.log(val2);
+        // });
+        // const idArray = Object.values(arrayID);
+        // // console.log(idArray);
+        // const onlyNumbers = idArray.filter(
+        //   (element) => typeof element === "number"
+        // );
+        // console.log(onlyNumbers);
+        // // const obj = Object.assign({}, onlyNumbers);
+        // let val2 = onlyNumbers.reduce(function (previousValue, currentValue) {
+        //   return {
+        //     price: previousValue.price + currentValue.price,
+        //   };
+        // });
+        // console.log(val2);
+
+        //total d'articles
+        let itemsQuantity = document.getElementById("totalQuantity");
+        let val = basket.reduce((previousValue, currentValue) => {
+          return {
+            quantity: previousValue.quantity + currentValue.quantity,
+          };
+        });
+        itemsQuantity.innerHTML = val.quantity;
       });
     }
   }
 }
+//regex
+setTimeout(function () {
+  let form = document.querySelector(".cart__order__form");
+  // console.log(form.email);
+
+  form.email.addEventListener("change", () => {
+    validEmail(this);
+  });
+
+  const validEmail = (inputEmail) => {
+    //Creation de la regexp pour la validation email
+    let emailRegExp = new RegExp(
+      "^[a-zA-Z0-9]+(?:.[a-zA-Z0-9]+)*@[a-zA-Z0-9]+(?:.[a-zA-Z0-9]+)*$",
+      "g"
+    );
+
+    let testEmail = emailRegExp.test(inputEmail.value);
+    console.log(testEmail);
+    // let addresmsg = document.getElementById("emailErrorMsg");
+    // if (testEmail) {
+    //   addresmsg.innerHTML = "Adresse Valide";
+    // } else {
+    //   addresmsg.innerHTML = "Adresse Non Valide";
+    // }
+  };
+}, 500);
 // function additionQuantity(...nombres) {
 //   let resultat = 0;
 //   nombres.forEach((nombre) => {

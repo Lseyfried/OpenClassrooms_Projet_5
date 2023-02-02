@@ -24,9 +24,10 @@ function displayProduct() {
   document.getElementById("price").textContent = data.price;
   document.getElementById("description").textContent = data.description;
   formValue = document.getElementById("colors");
-  for (const colorSelected of data.colors) {
+  data.colors.forEach((colorSelected) => {
     formValue.innerHTML += `<option value=${colorSelected}>${colorSelected}</option>`;
-  }
+  });
+
   quantity = document.getElementById("quantity");
   document.getElementById("addToCart").addEventListener("click", () => {
     let produitInformations = {
