@@ -1,75 +1,89 @@
 let formValue, quantity;
 // Recupere id de la page.
-const end_url = new URLSearchParams(window.location.search).get("id");
+const endUrl = new URLSearchParams(window.location.search).get("id");
 //On recupérer le produit par rapport à l'id de la page.
-recoverProducts(`http://localhost:3000/api/products/${end_url}`);
+recoverProducts(`http://localhost:3000/api/products/${endUrl}`);
 
-async function recoverProducts(API) {
-  const response = await fetch(API, {
+async function recoverProducts(url) {
+  const response = await fetch(url, {
     method: "GET",
   });
   if (!response.ok) {
     alert("Un Problème est survenu.");
   } else {
-    data = await response.json();
-    console.log(data);
-    displayProduct();
+    const product = await response.json();
+    console.log(product);
+    displayProduct(product); //doit injecter data dans la fonction
   }
 }
 
-function displayProduct() {
+function displayProduct(product) {
   let image = document.querySelector(".item__img");
-  image.innerHTML = `<img src="${data.imageUrl}" alt="${data.altTxt}">`;
-  document.getElementById("title").textContent = data.name;
-  document.getElementById("price").textContent = data.price;
-  document.getElementById("description").textContent = data.description;
+  image.innerHTML = `<img src="${product.imageUrl}" alt="${product.altTxt}">`;
+  document.getElementById("title").textContent = product.name;
+  document.getElementById("price").textContent = product.price;
+  document.getElementById("description").textContent = product.description;
   formValue = document.getElementById("colors");
-  data.colors.forEach((colorSelected) => {
-    formValue.innerHTML += `<option value=${colorSelected}>${colorSelected}</option>`;
+  product.colors.forEach((color) => {
+    formValue.innerHTML += `<option value=${color}>${color}</option>`;
   });
 
-  quantity = document.getElementById("quantity");
-  document.getElementById("addToCart").addEventListener("click", () => {
-    let produitInformations = {
-      id: end_url,
-      quantity: Number(quantity.value),
-      color: formValue.value,
-    };
-    console.log(produitInformations);
-    addProductToBasket(produitInformations);
-    window.location.href = "cart.html";
-  });
+  quantity = document.getElementById("quantity"); //sortir cette élement de la fonction. Dans une autre fonction après ligne 16 (addProductEvent)
+  addProductEvent();
 }
 
-function addProductToBasket(products) {
+function addProductToBasket(product) {
   let cart = JSON.parse(localStorage.getItem("basket"));
 
   console.log(cart);
-  if (cart !== null) {
-    for (let index = 0; index < cart.length; index++) {
-      console.log(cart[index]);
-      if (cart[index].color === formValue.value && cart[index].id === end_url) {
-        cart[index].quantity += Number(quantity.value);
-        return getStorage(cart);
-      } else if (
-        cart[index].id === end_url &&
-        cart[index].color !== formValue.value
-      ) {
-        cart.push(products);
-        return getStorage(cart);
-      }
-      if (cart[index].color !== formValue.value && cart[index].id !== end_url) {
-        cart.push(products);
-        return getStorage(cart);
-      }
-    }
-  } else {
+  if (cart === null) {
+    //revoir condition
     cart = [];
-    cart.push(products);
+    cart.push(product);
+    getStorage(cart);
+  }
+  for (let index = 0; index < cart.length; index++) {
+    console.log(index); // doit avoir 0123456
+    console.log(product);
+    if (cart[index].color === formValue.value && cart[index].id === endUrl) {
+      cart[index].quantity += Number(quantity.value);
+      return getStorage(cart);
+    }
+  }
+  {
+    cart.push(product);
     getStorage(cart);
   }
 }
+// } else if (
+//   cart[index].id === endUrl && //aucun intérêt que else et if
+//   cart[index].color !== formValue.value
+
+// if (cart[index].color !== formValue.value && cart[index].id !== endUrl) {
+//   cart.push(product);
+//   return getStorage(cart);
+// }
+
+// }
+// } else {
+//   cart = [];
+//   cart.push(products);
+//   getStorage(cart);
+// }
 
 function getStorage(array) {
   localStorage.setItem("basket", JSON.stringify(array));
+}
+
+function addProductEvent() {
+  document.getElementById("addToCart").addEventListener("click", () => {
+    let productToAdd = {
+      id: endUrl,
+      quantity: Number(quantity.value),
+      color: formValue.value,
+    };
+    console.log(productToAdd);
+    addProductToBasket(productToAdd);
+    // window.location.href = "cart.html";
+  });
 }

@@ -1,3 +1,4 @@
+let priceArray = [];
 const basket = JSON.parse(localStorage.getItem("basket"));
 for (let index = 0; index < basket.length; index++) {
   const basketColor = basket[index].color;
@@ -13,9 +14,8 @@ for (let index = 0; index < basket.length; index++) {
     if (!basketId.ok) {
       alert("Un problème est survenu");
     } else {
-      let arrayID = await basketId.json();
-      Promise.all([basketColor, basketQuantity, arrayID]).then((values) => {
-        // console.log(basket[index].quantity);
+      let dataID = await basketId.json(); //avec des promises dans une boucle mettre dans des fonctions (>20 lignes)
+      Promise.all([basketColor, basketQuantity, dataID]).then((values) => {
         let cart = document.getElementById("cart__items");
         cart.innerHTML += `<article class="cart__item" data-id="${values[2]._id}" data-color="${values[0]}">
           <div class="cart__item__img">
@@ -40,6 +40,7 @@ for (let index = 0; index < basket.length; index++) {
         </article>`;
         // change la quantité
         let changeButton = document.querySelectorAll(".itemQuantity");
+        console.log(changeButton); // afficher plusieurs fois à modifier
         for (let index = 0; index < changeButton.length; index++) {
           changeButton[index].addEventListener("change", (e) => {
             const closestElement = changeButton[index].closest("article");
@@ -50,12 +51,12 @@ for (let index = 0; index < basket.length; index++) {
               basket[index].quantity = Number(e.currentTarget.value);
               // console.log(basket);
               localStorage.setItem("basket", JSON.stringify(basket));
-              window.location.reload();
+              // window.location.reload(); rechargement au dom et LS sans recharger la page
             }
           });
         }
         //supprimer un article
-        let deletedButton = document.querySelectorAll(".deleteItem");
+        let deletedButton = document.querySelectorAll(".deleteItem"); // même remarque qu'avant
         for (let index = 0; index < deletedButton.length; index++) {
           deletedButton[index].addEventListener("click", (e) => {
             const closestDeleted = deletedButton[index].closest("article");
@@ -69,26 +70,56 @@ for (let index = 0; index < basket.length; index++) {
                 (value) => Object.keys(value).length !== 0
               );
               localStorage.setItem("basket", JSON.stringify(basketReforme));
-              window.location.reload();
+              // window.location.reload();
             }
           });
         }
-        //total du prix
+        //total  prix
         let priceTotal = document.getElementById("totalPrice");
-        const idArray = Object.values(arrayID);
-        // console.log(idArray[3]);
-        let val2 = idArray.reduce((previousValue, currentValue) => {
+        priceArray.push(dataID);
+
+        let sumPrice = priceArray.reduce((previousValue, currentValue) => {
           return {
-            price: Number(previousValue) + Number(currentValue),
+            price: previousValue.price + currentValue.price,
           };
         });
-        console.log(val2);
+
+        // const priceArray = Object.entries(dataID);
+        // let priceArray = [];
+        // let newPriceArray = [];
+
+        // priceArray.push(dataID);
+        // console.log(priceArray);
+
+        // const priceArray = [];
+        // priceArray.unshift(dataID.price);
+        // console.log(priceArray);
+
+        // for (let index = 0; index < array.length; index++) {
+        //   idArray.push(dataID.price);
+        // }
+        // let sumPrice = 0;
+        // sumPrice = propretyValuesPrice.reduce((previousValue, currentValue) => {
+        //   return {
+        //     price: previousValue.price + currentValue.price,
+        //   };
         // });
-        // const idArray = Object.values(arrayID);
-        // // console.log(idArray);
+
+        // let val = idArray.reduce((previousValue, currentValue) => {
+        //   return {
+        //     price: previousValue.price + currentValue.price,
+        //   };
+        // });
+        // console.log(val);
         // const onlyNumbers = idArray.filter(
         //   (element) => typeof element === "number"
         // );
+
+        // console.log(arrayID);
+        // });
+        // const idArray = Object.values(arrayID);
+        // // console.log(idArray);
+
         // console.log(onlyNumbers);
         // // const obj = Object.assign({}, onlyNumbers);
         // let val2 = onlyNumbers.reduce(function (previousValue, currentValue) {
@@ -99,21 +130,23 @@ for (let index = 0; index < basket.length; index++) {
         // console.log(val2);
 
         //total d'articles
-        let itemsQuantity = document.getElementById("totalQuantity");
-        let val = basket.reduce((previousValue, currentValue) => {
+        let itemsQuantity = document.getElementById("totalQuantity"); //fonction
+        let sumQuantity = basket.reduce((previousValue, currentValue) => {
           return {
             quantity: previousValue.quantity + currentValue.quantity,
           };
         });
-        itemsQuantity.innerHTML = val.quantity;
+        itemsQuantity.innerHTML = sumQuantity.quantity;
       });
     }
   }
 }
+
 //regex
 setTimeout(function () {
+  // enlever settimeout
   let form = document.querySelector(".cart__order__form");
-  // console.log(form.email);
+  console.log(form.email);
 
   form.email.addEventListener("change", () => {
     validEmail(this);
