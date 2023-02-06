@@ -14,6 +14,7 @@ async function recoverProducts(url) {
     const product = await response.json();
     console.log(product);
     displayProduct(product); //doit injecter data dans la fonction
+    addProductEvent();
   }
 }
 
@@ -29,9 +30,9 @@ function displayProduct(product) {
   });
 
   quantity = document.getElementById("quantity"); //sortir cette élement de la fonction. Dans une autre fonction après ligne 16 (addProductEvent)
-  addProductEvent();
 }
 
+//add the product in the LocalStorage after checking
 function addProductToBasket(product) {
   let cart = JSON.parse(localStorage.getItem("basket"));
 
@@ -55,26 +56,11 @@ function addProductToBasket(product) {
     getStorage(cart);
   }
 }
-// } else if (
-//   cart[index].id === endUrl && //aucun intérêt que else et if
-//   cart[index].color !== formValue.value
-
-// if (cart[index].color !== formValue.value && cart[index].id !== endUrl) {
-//   cart.push(product);
-//   return getStorage(cart);
-// }
-
-// }
-// } else {
-//   cart = [];
-//   cart.push(products);
-//   getStorage(cart);
-// }
-
+// Put the product in the LocalStorage
 function getStorage(array) {
   localStorage.setItem("basket", JSON.stringify(array));
 }
-
+//Recover the product and check if it's already exist in the basket
 function addProductEvent() {
   document.getElementById("addToCart").addEventListener("click", () => {
     let productToAdd = {
