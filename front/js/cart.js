@@ -1,4 +1,4 @@
-const basket = JSON.parse(localStorage.getItem("basket"));
+let basket = JSON.parse(localStorage.getItem("basket"));
 
 // const color = [];
 // const quantity = [];
@@ -41,8 +41,8 @@ function getPromiseAll() {
     }
     changeQuantity();
     deleteProducts();
-    totalProducts();
-    emailRegex();
+    totalQuantity();
+    // emailRegex();
   });
   // .catch((err) => {
   //   console.log(err);
@@ -50,11 +50,14 @@ function getPromiseAll() {
 }
 getPromiseAll();
 
-// change la quantité
+// change quantity
 function changeQuantity() {
+  let itemsQuantity = document.getElementById("totalQuantity");
   let changeButton = document.querySelectorAll(".itemQuantity");
+
+  // console.log(basket);
   for (let index = 0; index < changeButton.length; index++) {
-    // console.log(changeButton[index]);
+    basket = JSON.parse(localStorage.getItem("basket"));
     changeButton[index].addEventListener("change", (e) => {
       const closestElement = changeButton[index].closest("article");
       if (
@@ -64,11 +67,18 @@ function changeQuantity() {
         basket[index].quantity = Number(e.currentTarget.value);
         localStorage.setItem("basket", JSON.stringify(basket));
       }
+      let sumQuantity = basket.reduce((previousValue, currentValue) => {
+        return {
+          quantity: previousValue.quantity + currentValue.quantity,
+        };
+      });
+      itemsQuantity.innerHTML = sumQuantity.quantity;
     });
   }
 }
 // delete a product
 function deleteProducts() {
+  let itemsQuantity = document.getElementById("totalQuantity");
   let deletedButton = document.querySelectorAll(".deleteItem");
   for (let index = 0; index < deletedButton.length; index++) {
     deletedButton[index].addEventListener("click", (e) => {
@@ -79,11 +89,17 @@ function deleteProducts() {
         closestDeleted.dataset["color"] === basket[index].color
       ) {
         delete basket[index];
-        let basketReforme = basket.filter(
-          (value) => Object.keys(value).length !== 0
-        );
-        localStorage.setItem("basket", JSON.stringify(basketReforme));
+        basket = basket.filter((value) => Object.keys(value).length !== 0);
+
+        localStorage.setItem("basket", JSON.stringify(basket));
       }
+      basket = JSON.parse(localStorage.getItem("basket"));
+      let sumQuantity = basket.reduce((previousValue, currentValue) => {
+        return {
+          quantity: previousValue.quantity + currentValue.quantity,
+        };
+      });
+      itemsQuantity.innerHTML = sumQuantity.quantity;
     });
   }
 }
@@ -144,50 +160,56 @@ function totalPrice() {
 // });
 // console.log(val2);
 
-//total d'articles
-function totalProducts() {
+// total d'articles
+function totalQuantity() {
   let itemsQuantity = document.getElementById("totalQuantity"); //fonction
-  let sumQuantity = basket.reduce((previousValue, currentValue) => {
-    return {
-      quantity: previousValue.quantity + currentValue.quantity,
-    };
-  });
-  itemsQuantity.innerHTML = sumQuantity.quantity;
+  basket = JSON.parse(localStorage.getItem("basket"));
+  // console.log(basket);
+  for (let index = 0; index < basket.length; index++) {
+    // changeButton[index].addEventListener("change", (e) => {
+    console.log(basket[index].quantity);
+    let sumQuantity = basket.reduce((previousValue, currentValue) => {
+      return {
+        quantity: previousValue.quantity + currentValue.quantity,
+      };
+    });
+    itemsQuantity.innerHTML = sumQuantity.quantity;
+    // });
+  }
 }
-
 //regex
 // setTimeout(function () {
 //   // enlever settimeout
-function emailRegex() {
-  let form = document.querySelector(".cart__order__form");
-  console.log(form.email);
+// function emailRegex() {
+//   let form = document.querySelector(".cart__order__form");
+//   console.log(form.email);
 
-  form.email.addEventListener("change", () => {
-    validEmail(this);
-  });
+//   form.email.addEventListener("change", () => {
+//     validEmail(this);
+//   });
 
-  const validEmail = (inputEmail) => {
-    //Creation de la regexp pour la validation email
-    let emailRegExp = new RegExp(
-      "^[a-zA-Z0-9]+(?:.[a-zA-Z0-9]+)*@[a-zA-Z0-9]+(?:.[a-zA-Z0-9]+)*$",
-      "g"
-    );
+//   const validEmail = (inputEmail) => {
+//     //Creation de la regexp pour la validation email
+//     let emailRegExp = new RegExp(
+//       "^[a-zA-Z0-9]+(?:.[a-zA-Z0-9]+)*@[a-zA-Z0-9]+(?:.[a-zA-Z0-9]+)*$",
+//       "g"
+//     );
 
-    let testEmail = emailRegExp.test(inputEmail.value);
-    console.log(testEmail);
-    let addresmsg = document.getElementById("emailErrorMsg");
-    if (testEmail) {
-      addresmsg.innerHTML = "Adresse Valide";
-    } else {
-      addresmsg.innerHTML = "Adresse Non Valide";
-    }
-  };
-  //   };
-  // }, 500);
-  // function additionQuantity(...nombres) {
-  //   let resultat = 0;
-  //   nombres.forEach((nombre) => {
-  //     resultat += nombre;
-  //     console.log(resultat);
-  //   });
-}
+//     let testEmail = emailRegExp.test(inputEmail.value);
+//     console.log(testEmail);
+//     let addresmsg = document.getElementById("emailErrorMsg");
+//     if (testEmail) {
+//       addresmsg.innerHTML = "Adresse Valide";
+//     } else {
+//       addresmsg.innerHTML = "Adresse Non Valide";
+//     }
+//   };
+//   //   };
+// }, 500);
+// function additionQuantity(...nombres) {
+//   let resultat = 0;
+//   nombres.forEach((nombre) => {
+//     resultat += nombre;
+//     console.log(resultat);
+//   });
+// }
