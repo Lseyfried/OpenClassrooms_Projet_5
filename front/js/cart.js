@@ -1,13 +1,13 @@
 let basket = JSON.parse(localStorage.getItem("basket"));
-
-// const color = [];
-// const quantity = [];
-
-function getPromiseAll() {
-  const promises = [];
+let totalPrice = [];
+const promises = [];
+let promisesPrice = [];
+let quantityValue = [];
+async function getPromiseAll() {
+  // const promises = [];
   for (let index = 0; index < basket.length; index++) {
     promises.push(
-      fetch(`http://localhost:3000/api/products/${basket[index].id}`, {
+      await fetch(`http://localhost:3000/api/products/${basket[index].id}`, {
         method: "GET",
       }).then((res) => res.json())
     );
@@ -42,8 +42,10 @@ function getPromiseAll() {
     changeQuantity();
     deleteProducts();
     totalQuantity();
+    total();
     // emailRegex();
   });
+
   // .catch((err) => {
   //   console.log(err);
   // });
@@ -54,11 +56,13 @@ getPromiseAll();
 function changeQuantity() {
   let itemsQuantity = document.getElementById("totalQuantity");
   let changeButton = document.querySelectorAll(".itemQuantity");
+  let priceTotal = document.getElementById("totalPrice");
 
-  // console.log(basket);
   for (let index = 0; index < changeButton.length; index++) {
     basket = JSON.parse(localStorage.getItem("basket"));
     changeButton[index].addEventListener("change", (e) => {
+      // console.log(quantityValue);
+
       const closestElement = changeButton[index].closest("article");
       if (
         closestElement.dataset["id"] === basket[index].id &&
@@ -66,13 +70,19 @@ function changeQuantity() {
       ) {
         basket[index].quantity = Number(e.currentTarget.value);
         localStorage.setItem("basket", JSON.stringify(basket));
+        quantityValue[index] =
+          Number(e.currentTarget.value) * promises[index].price;
       }
       let sumQuantity = basket.reduce((previousValue, currentValue) => {
         return {
           quantity: previousValue.quantity + currentValue.quantity,
         };
       });
+      let price = quantityValue.reduce((a, b) => {
+        return +a + +b;
+      });
       itemsQuantity.innerHTML = sumQuantity.quantity;
+      priceTotal.innerHTML = price;
     });
   }
 }
@@ -80,8 +90,11 @@ function changeQuantity() {
 function deleteProducts() {
   let itemsQuantity = document.getElementById("totalQuantity");
   let deletedButton = document.querySelectorAll(".deleteItem");
+  let priceTotal = document.getElementById("totalPrice");
+  let changeButton = document.querySelectorAll(".itemQuantity");
   for (let index = 0; index < deletedButton.length; index++) {
     deletedButton[index].addEventListener("click", (e) => {
+      // console.log(price);
       const closestDeleted = deletedButton[index].closest("article");
       closestDeleted.remove();
       if (
@@ -90,91 +103,65 @@ function deleteProducts() {
       ) {
         delete basket[index];
         basket = basket.filter((value) => Object.keys(value).length !== 0);
-
         localStorage.setItem("basket", JSON.stringify(basket));
+        delete quantityValue[index];
+        // quantityValue.filter((value) => {
+        //   Object.keys(value).length !== 0;
+        // });
+        // console.log(quantityValue);
       }
+      quantityValue.reduce((a, b) => {
+        return +a + +b;
+      });
+      // let firstPrice = changeButton[index].value * promises[index].price;
+
+      // console.log(quantityValue);
+      // quantityValue = quantityValue.filter(
+      //   (value) => Object.keys(value).length !== 0
+      // );
+      // quantityValue.push(changeButton[index].value * promises[index].price);
+      console.log(quantityValue);
+      let price = quantityValue.reduce((a, b) => {
+        return +a + +b;
+      });
       basket = JSON.parse(localStorage.getItem("basket"));
       let sumQuantity = basket.reduce((previousValue, currentValue) => {
         return {
           quantity: previousValue.quantity + currentValue.quantity,
         };
       });
+
       itemsQuantity.innerHTML = sumQuantity.quantity;
+      priceTotal.innerHTML = price;
     });
   }
 }
 // //total  prix
-function totalPrice() {
+function total() {
   let priceTotal = document.getElementById("totalPrice");
-  priceArray.push(dataID);
+  let changeButton = document.querySelectorAll(".itemQuantity");
+  for (let index = 0; index < changeButton.length; index++) {
+    quantityValue.push(changeButton[index].value * promises[index].price);
+  }
 
-  let sumPrice = priceArray.reduce((previousValue, currentValue) => {
-    return {
-      price: previousValue.price + currentValue.price,
-    };
+  let price = quantityValue.reduce((a, b) => {
+    return +a + +b;
   });
+
+  priceTotal.innerHTML = price;
 }
-
-// const priceArray = Object.entries(dataID);
-// let priceArray = [];
-// let newPriceArray = [];
-
-// priceArray.push(dataID);
-// console.log(priceArray);
-
-// const priceArray = [];
-// priceArray.unshift(dataID.price);
-// console.log(priceArray);
-
-// for (let index = 0; index < array.length; index++) {
-//   idArray.push(dataID.price);
-// }
-// let sumPrice = 0;
-// sumPrice = propretyValuesPrice.reduce((previousValue, currentValue) => {
-//   return {
-//     price: previousValue.price + currentValue.price,
-//   };
-// });
-
-// let val = idArray.reduce((previousValue, currentValue) => {
-//   return {
-//     price: previousValue.price + currentValue.price,
-//   };
-// });
-// console.log(val);
-// const onlyNumbers = idArray.filter(
-//   (element) => typeof element === "number"
-// );
-
-// console.log(arrayID);
-// });
-// const idArray = Object.values(arrayID);
-// // console.log(idArray);
-
-// console.log(onlyNumbers);
-// // const obj = Object.assign({}, onlyNumbers);
-// let val2 = onlyNumbers.reduce(function (previousValue, currentValue) {
-//   return {
-//     price: previousValue.price + currentValue.price,
-//   };
-// });
-// console.log(val2);
 
 // total d'articles
 function totalQuantity() {
   let itemsQuantity = document.getElementById("totalQuantity"); //fonction
   basket = JSON.parse(localStorage.getItem("basket"));
-  // console.log(basket);
   for (let index = 0; index < basket.length; index++) {
-    // changeButton[index].addEventListener("change", (e) => {
-    console.log(basket[index].quantity);
     let sumQuantity = basket.reduce((previousValue, currentValue) => {
       return {
         quantity: previousValue.quantity + currentValue.quantity,
       };
     });
     itemsQuantity.innerHTML = sumQuantity.quantity;
-    // });
   }
 }
 //regex
