@@ -1,5 +1,5 @@
 let basket = JSON.parse(localStorage.getItem("basket"));
-let totalPrice = [];
+const dataProducts = [];
 const promises = [];
 let promisesPrice = [];
 let quantityPrice = [];
@@ -37,6 +37,7 @@ async function getPromiseAll() {
               </div>
             </article>`;
     }
+
     changeQuantity();
     deleteProducts();
     totalQuantity();
@@ -54,6 +55,8 @@ firstNameRegex();
 lastNameRegex();
 addressRegex();
 cityRegex();
+revoverForm();
+
 // change quantity
 function changeQuantity() {
   let itemsQuantity = document.getElementById("totalQuantity");
@@ -93,7 +96,7 @@ function deleteProducts() {
   let itemsQuantity = document.getElementById("totalQuantity");
   let deletedButton = document.querySelectorAll(".deleteItem");
   let priceTotal = document.getElementById("totalPrice");
-  let changeButton = document.querySelectorAll(".itemQuantity");
+  // let changeButton = document.querySelectorAll(".itemQuantity");
   for (let index = 0; index < deletedButton.length; index++) {
     deletedButton[index].addEventListener("click", (e) => {
       // console.log(price);
@@ -159,18 +162,12 @@ function totalQuantity() {
 //reGex emil
 function emailRegex() {
   let form = document.querySelector(".cart__order__form");
-  console.log(form.email);
-
   form.email.addEventListener("change", () => {
     validEmail(form.email.value);
-    // console.log(form.email.value);
   });
-
   const validEmail = (inputEmail) => {
     let emailRegExp = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
     let testEmail = emailRegExp.test(inputEmail);
-    // console.log(testEmail);
-    // console.log(inputEmail.value);
     let addresmsg = document.getElementById("emailErrorMsg");
     if (testEmail) {
       addresmsg.innerHTML = "Adresse Valide";
@@ -183,8 +180,6 @@ function emailRegex() {
 //reGex firstname
 function firstNameRegex() {
   let form = document.querySelector(".cart__order__form");
-  console.log(form.firstname);
-
   form.firstName.addEventListener("change", () => {
     validFirstName(form.firstName.value);
     // console.log(form.email.value);
@@ -207,8 +202,6 @@ function firstNameRegex() {
 //reGex Lastname
 function lastNameRegex() {
   let form = document.querySelector(".cart__order__form");
-  console.log(form.lastName);
-
   form.lastName.addEventListener("change", () => {
     validLastName(form.lastName.value);
     // console.log(form.email.value);
@@ -232,8 +225,6 @@ function lastNameRegex() {
 //reGex Adress
 function addressRegex() {
   let form = document.querySelector(".cart__order__form");
-  console.log(form.address);
-
   form.address.addEventListener("change", () => {
     validaddress(form.address.value);
     // console.log(form.email.value);
@@ -242,7 +233,6 @@ function addressRegex() {
   const validaddress = (inputaddress) => {
     let addressRegExp = /^[a-zA-Z0-9\s,'-]*$/;
     let testaddress = addressRegExp.test(inputaddress);
-    console.log(testaddress);
     // console.log(inputEmail.value);
     let addressMsg = document.getElementById("addressErrorMsg");
     if (testaddress) {
@@ -255,15 +245,12 @@ function addressRegex() {
 //reGex city
 function cityRegex() {
   let form = document.querySelector(".cart__order__form");
-  console.log(form.city);
-
   form.city.addEventListener("change", () => {
     validcity(form.city.value);
-    // console.log(form.email.value);
   });
 
   const validcity = (inputcity) => {
-    let cityRegExp = /^[a-zA-Z][a-zA-Z\s-]+[a-zA-Z]$/;
+    let cityRegExp = /^\s*[a-zA-Z]{1}[0-9a-zA-Z][0-9a-zA-Z '-.=#/]*$/;
     let testcity = cityRegExp.test(inputcity);
     console.log(testcity);
     // console.log(inputEmail.value);
@@ -274,4 +261,27 @@ function cityRegex() {
       cityMsg.innerHTML = "Ville Non Valide";
     }
   };
+}
+//recover form
+function revoverForm() {
+  let form = document.querySelector(".cart__order__form");
+  form.addEventListener("submit", (e) => {
+    e.preventDefault();
+
+    const formData = new FormData(form);
+    const objectFormData = Object.fromEntries(formData);
+    for (let index = 0; index < basket.length; index++) {
+      dataProducts.push(basket[index].id);
+    }
+    console.log(objectFormData);
+    console.log(dataProducts);
+    fetch("http://localhost:3000/api/products/order", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(objectFormData, dataProducts),
+    })
+      .then((res) => res.json())
+      .then((dataPost) => console.log(dataPost))
+      .catch((error) => console.log(error));
+  });
 }
