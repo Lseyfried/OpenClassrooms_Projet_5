@@ -1,6 +1,7 @@
 let basket = JSON.parse(localStorage.getItem("basket"));
-const dataProducts = [];
+const products = [];
 const promises = [];
+const productId = [];
 let promisesPrice = [];
 let quantityPrice = [];
 async function getPromiseAll() {
@@ -55,7 +56,7 @@ firstNameRegex();
 lastNameRegex();
 addressRegex();
 cityRegex();
-revoverForm();
+recoverObjectProducts();
 
 // change quantity
 function changeQuantity() {
@@ -262,26 +263,66 @@ function cityRegex() {
     }
   };
 }
-//recover form
-function revoverForm() {
+
+function addIdProducts() {
+  for (let index = 0; index < basket.length; index++) {
+    const productId = [];
+    productId.push(basket[index].id);
+  }
+}
+function recoverObjectProducts() {
   let form = document.querySelector(".cart__order__form");
   form.addEventListener("submit", (e) => {
     e.preventDefault();
-
-    const formData = new FormData(form);
-    const objectFormData = Object.fromEntries(formData);
-    for (let index = 0; index < basket.length; index++) {
-      dataProducts.push(basket[index].id);
-    }
-    console.log(objectFormData);
-    console.log(dataProducts);
-    fetch("http://localhost:3000/api/products/order", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(objectFormData, dataProducts),
-    })
-      .then((res) => res.json())
-      .then((dataPost) => console.log(dataPost))
-      .catch((error) => console.log(error));
+    // for (let index = 0; index < basket.length; index++) {
+    //   productId.push(basket[index].id);
+    // }
+    revoverForm();
   });
+}
+// function recoverObjectProducts() {
+//   let form = document.querySelector(".cart__order__form");
+//   form.addEventListener("submit", (e) => {
+//     e.preventDefault();
+
+//     const formData = new FormData(form);
+//     const contact = Object.fromEntries(formData);
+//     for (let index = 0; index < basket.length; index++) {
+//       products.push(basket[index].id);
+//     }
+//     console.log(contact);
+//     console.log(products);
+//   });
+// }
+//recover form
+async function revoverForm() {
+  let form = document.querySelector(".cart__order__form");
+  for (let index = 0; index < basket.length; index++) {
+    products.push(basket[index].id);
+  }
+
+  const contactForm = {
+    contact: {
+      firstName: form.firstName.value,
+      lastName: form.lastName.value,
+      address: form.address.value,
+      city: form.city.value,
+      email: form.email.value,
+    },
+    products: products,
+  };
+  // contact["products"].push(products);
+  console.log(contactForm);
+  // console.log(products);
+  await fetch(`http://localhost:3000/api/products/order`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(contactForm),
+  })
+    .then((response) => response.json())
+    .then((dataPost) => {
+      const orderId = dataPost.orderId;
+      window.location.href = `confirmation.html?order=${orderId}`;
+    })
+    .catch((error) => console.log(error));
 }
