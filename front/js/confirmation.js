@@ -1,4 +1,3 @@
-let orderIdUrl = new URLSearchParams(window.location.search).get("order");
-console.log(orderIdUrl);
-let confirmation = document.querySelector("#orderId");
-confirmation.innerHTML = orderIdUrl;
+let order = document.querySelector("#orderId");
+const orderUrl = new URLSearchParams(window.location.search).get("orderId");
+order.textContent = orderUrl;
