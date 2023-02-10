@@ -29,7 +29,7 @@ function displayProduct(product) {
     formValue.innerHTML += `<option value=${color}>${color}</option>`;
   });
 
-  quantity = document.getElementById("quantity"); //sortir cette élement de la fonction. Dans une autre fonction après ligne 16 (addProductEvent)
+  quantity = document.getElementById("quantity");
 }
 
 //add the product in the LocalStorage after checking
@@ -62,7 +62,8 @@ function getStorage(array) {
 }
 //Recover the product and check if it's already exist in the basket
 function addProductEvent() {
-  document.getElementById("addToCart").addEventListener("click", () => {
+  document.getElementById("addToCart").addEventListener("click", (e) => {
+    e.preventDefault();
     let productToAdd = {
       id: endUrl,
       quantity: Number(quantity.value),

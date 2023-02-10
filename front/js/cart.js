@@ -4,8 +4,8 @@ const promises = [];
 const productId = [];
 let promisesPrice = [];
 let quantityPrice = [];
+
 async function getPromiseAll() {
-  // const promises = [];
   for (let index = 0; index < basket.length; index++) {
     promises.push(
       await fetch(`http://localhost:3000/api/products/${basket[index].id}`, {
@@ -146,7 +146,7 @@ function total() {
   priceTotal.innerHTML = price;
 }
 
-// total d'articles
+// total articles
 function totalQuantity() {
   let itemsQuantity = document.getElementById("totalQuantity");
   basket = JSON.parse(localStorage.getItem("basket"));
