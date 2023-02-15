@@ -1,10 +1,10 @@
 let formValue, quantity;
 // Recupere id de la page.
-const endUrl = new URLSearchParams(window.location.search).get("id");
+const id = new URLSearchParams(window.location.search).get("id");
 //On recupérer le produit par rapport à l'id de la page.
-recoverProducts(`http://localhost:3000/api/products/${endUrl}`);
+recoverProduct(`http://localhost:3000/api/products/${id}`);
 
-async function recoverProducts(url) {
+async function recoverProduct(url) {
   const response = await fetch(url, {
     method: "GET",
   });
@@ -24,12 +24,12 @@ function displayProduct(product) {
   document.getElementById("title").textContent = product.name;
   document.getElementById("price").textContent = product.price;
   document.getElementById("description").textContent = product.description;
-  formValue = document.getElementById("colors");
+  colorsElt = document.getElementById("colors");
   product.colors.forEach((color) => {
-    formValue.innerHTML += `<option value=${color}>${color}</option>`;
+    colorsElt.innerHTML += `<option value=${color}>${color}</option>`;
   });
 
-  quantity = document.getElementById("quantity");
+  // let quantity = document.getElementById("quantity");
 }
 
 //add the product in the LocalStorage after checking
@@ -40,34 +40,36 @@ function addProductToBasket(product) {
   if (cart === null) {
     //revoir condition
     cart = [];
-    cart.push(product);
-    getStorage(cart);
+    // cart.push(product);
+    // getStorage(cart);
   }
   for (let index = 0; index < cart.length; index++) {
-    console.log(index); // doit avoir 0123456
-    console.log(product);
-    if (cart[index].color === formValue.value && cart[index].id === endUrl) {
-      cart[index].quantity += Number(quantity.value);
-      return getStorage(cart);
+    // console.log(index); // doit avoir 0123456
+    // console.log(product);
+    if (
+      cart[index].color === colorsElt.value &&
+      cart[index].id === product.id
+    ) {
+      cart[index].quantity += Number(product.quantity);
+      return setStorage(cart);
     }
   }
-  {
-    cart.push(product);
-    getStorage(cart);
-  }
+
+  cart.push(product);
+  setStorage(cart);
 }
 // Put the product in the LocalStorage
-function getStorage(array) {
+function setStorage(array) {
   localStorage.setItem("basket", JSON.stringify(array));
 }
 //Recover the product and check if it's already exist in the basket
 function addProductEvent() {
   document.getElementById("addToCart").addEventListener("click", (e) => {
     e.preventDefault();
-    let productToAdd = {
-      id: endUrl,
-      quantity: Number(quantity.value),
-      color: formValue.value,
+    const productToAdd = {
+      id,
+      quantity: Number(document.getElementById("quantity").value),
+      color: colorsElt.value,
     };
     console.log(productToAdd);
     addProductToBasket(productToAdd);
