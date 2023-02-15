@@ -3,9 +3,9 @@ let priceTotal = document.getElementById("totalPrice");
 const products = [];
 const promises = [];
 const productId = [];
-let promisesPrice = [];
-let quantityPrice = [];
-let sumQuantity = [];
+// let promisesPrice = [];
+let quantityElt = [];
+let quantityTotal = [];
 
 async function getPromiseAll() {
   for (let index = 0; index < basket.length; index++) {
@@ -82,7 +82,7 @@ function changeQuantity() {
       ) {
         basket[index].quantity = Number(e.currentTarget.value);
         localStorage.setItem("basket", JSON.stringify(basket));
-        quantityPrice[index] =
+        quantityElt[index] =
           Number(e.currentTarget.value) * promises[index].price; //changer promises. Différent
       }
       totalQuantity();
@@ -105,7 +105,7 @@ function deleteProducts() {
         delete basket[index];
         basket = basket.filter((product) => Object.keys(product).length !== 0);
         localStorage.setItem("basket", JSON.stringify(basket));
-        quantityPrice.splice([index], 1);
+        quantityElt.splice([index], 1);
       }
       totalQuantity();
       total();
@@ -116,29 +116,29 @@ function deleteProducts() {
 function total() {
   let price = [];
   let changeButton = document.querySelectorAll(".itemQuantity");
-  if (quantityPrice.length === 0) {
+  if (quantityElt.length === 0) {
     for (let index = 0; index < changeButton.length; index++) {
-      quantityPrice.push(changeButton[index].value * promises[index].price);
+      quantityElt.push(changeButton[index].value * promises[index].price);
+      console.log(promises[index]);
     }
   }
-  price = quantityPrice.reduce((a, b) => {
+  price = quantityElt.reduce((a, b) => {
     return +a + +b;
   });
 
   priceTotal.innerHTML = price;
-  console.log(quantityPrice);
 }
 
 // total articles
 function totalQuantity() {
   let itemsQuantity = document.getElementById("totalQuantity");
 
-  sumQuantity = basket.reduce((previousValue, currentValue) => {
+  quantityTotal = basket.reduce((previousValue, currentValue) => {
     return {
       quantity: previousValue.quantity + currentValue.quantity,
     };
   });
-  itemsQuantity.innerHTML = sumQuantity.quantity; //revoir
+  itemsQuantity.innerHTML = quantityTotal.quantity; //revoir
 }
 
 //reGex emil
