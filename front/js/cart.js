@@ -178,8 +178,6 @@ function lastNameRegex() {
     let lastNameRegExp =
       /^[a-zA-ZàáâäãåąčćęèéêëėįìíîïłńòóôöõøùúûüųūÿýżźñçčšžÀÁÂÄÃÅĄĆČĖĘÈÉÊËÌÍÎÏĮŁŃÒÓÔÖÕØÙÚÛÜŲŪŸÝŻŹÑßÇŒÆČŠŽ∂ð ,.'-]+$/u;
     let testLastName = lastNameRegExp.test(form.lastName.value);
-    console.log(testLastName);
-    // console.log(inputEmail.value);
     let firstNameMsg = document.getElementById("lastNameErrorMsg");
     if (testLastName) {
       firstNameMsg.innerHTML = "Nom Valide";
@@ -195,7 +193,6 @@ function addressRegex() {
   form.address.addEventListener("change", () => {
     let addressRegExp = /^[a-zA-Z0-9\s,'-]*$/;
     let testaddress = addressRegExp.test(form.address.value);
-    // console.log(inputEmail.value);
     let addressMsg = document.getElementById("addressErrorMsg");
     if (testaddress) {
       addressMsg.innerHTML = "Adresse Valide";
@@ -211,7 +208,6 @@ function cityRegex() {
     let cityRegExp = /^\s*[a-zA-Z]{1}[0-9a-zA-Z][0-9a-zA-Z '-.=#/]*$/;
     let testcity = cityRegExp.test(form.city.value);
     console.log(testcity);
-    // console.log(inputEmail.value);
     let cityMsg = document.getElementById("cityErrorMsg");
     if (testcity) {
       cityMsg.innerHTML = "Ville Valide";
@@ -220,20 +216,19 @@ function cityRegex() {
     }
   });
 }
-//fonction inutile
 function recoverForm() {
   let form = document.querySelector(".cart__order__form");
   const productId = [];
-  for (let index = 0; index < basket.length; index++) {
-    productId.push(basket[index].id);
-  }
   form.addEventListener("submit", (e) => {
     e.preventDefault();
-    let form = document.querySelector(".cart__order__form");
+    // let form = document.querySelector(".cart__order__form");
     for (let index = 0; index < basket.length; index++) {
-      //boucle supplémentaire sur les quantités
-      productId.push(basket[index].id);
+      for (let i = 0; i < basket[index].quantity; i++) {
+        productId.push(basket[index].id);
+      }
     }
+
+    // console.log(productId);
     const formToPost = {
       contact: {
         firstName: form.firstName.value,
@@ -242,8 +237,9 @@ function recoverForm() {
         city: form.city.value,
         email: form.email.value,
       },
-      products: productId, //boucle supplémentaire sur les quantités
+      products: productId,
     };
+    console.log(basket);
     sendFormToApi();
     async function sendFormToApi() {
       await fetch(`http://localhost:3000/api/products/order`, {
@@ -253,6 +249,7 @@ function recoverForm() {
       })
         .then((response) => response.json())
         .then((dataPost) => {
+          console.log(dataPost);
           const orderId = dataPost.orderId;
           window.location.href = `confirmation.html?orderId=${orderId}`;
         })
