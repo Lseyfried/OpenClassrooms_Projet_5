@@ -1,10 +1,13 @@
 let basket = JSON.parse(localStorage.getItem("basket"));
 let priceTotal = document.getElementById("totalPrice");
+let itemsQuantity = document.getElementById("totalQuantity");
 const products = [];
 const promises = [];
 const productId = [];
 // let promisesPrice = [];
+//Prix total des produits
 let quantityElt = [];
+//Quantité total des produits
 let quantityTotal = [];
 
 async function getPromiseAll() {
@@ -68,7 +71,7 @@ recoverForm();
 
 // change quantity
 function changeQuantity() {
-  let itemsQuantity = document.getElementById("totalQuantity");
+  // let itemsQuantity = document.getElementById("totalQuantity");
   let changeButton = document.querySelectorAll(".itemQuantity");
   for (let index = 0; index < changeButton.length; index++) {
     changeButton[index].addEventListener("change", (e) => {
@@ -92,7 +95,6 @@ function changeQuantity() {
 }
 // delete a product
 function deleteProducts() {
-  let itemsQuantity = document.getElementById("totalQuantity");
   let deletedButton = document.querySelectorAll(".deleteItem");
   for (let index = 0; index < deletedButton.length; index++) {
     deletedButton[index].addEventListener("click", (e) => {
@@ -131,7 +133,7 @@ function total() {
 
 // total articles
 function totalQuantity() {
-  let itemsQuantity = document.getElementById("totalQuantity");
+  // let itemsQuantity = document.getElementById("totalQuantity");
 
   quantityTotal = basket.reduce((previousValue, currentValue) => {
     return {
