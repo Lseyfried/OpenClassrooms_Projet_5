@@ -40,10 +40,11 @@ async function getPromiseAll() {
 //affiche les produits sélectionnés
 function displayProducts(productElt) {
   let cartElt = document.getElementById("cart__items");
+  console.log(productElt);
   for (let index = 0; index < productElt.length; index++) {
     cartElt.innerHTML += `<article class="cart__item" data-id="${productElt[index]._id}" data-color="${basket[index].color}">
           <div class="cart__item__img">
-            <img src="${productElt[index].imageUrl}" alt="${productElt[index].alTxt}">
+            <img src="${productElt[index].imageUrl}" alt="${productElt[index].altTxt}">
           </div>
           <div class="cart__item__content">
             <div class="cart__item__content__description">
@@ -67,6 +68,8 @@ function displayProducts(productElt) {
 
 // change quantity
 function changeQuantity() {
+  console.log(basket);
+  // let itemsQuantity = document.getElementById("totalQuantity");
   //passer en argument les prix récupérés depuis l'API
   let changeButton = document.querySelectorAll(".itemQuantity");
   for (let index = 0; index < changeButton.length; index++) {
@@ -74,39 +77,43 @@ function changeQuantity() {
       // console.log(quantityPrice);
       //plusieurs fonctions à mettre
       const closestElement = changeButton[index].closest("article");
-      console.log(basket[index].id);
-      if (
-        closestElement.dataset["id"] === basket[index].id &&
-        closestElement.dataset["color"] === basket[index].color
-      ) {
-        basket[index].quantity = Number(e.currentTarget.value);
+      let foundItem = basket.find((item) => {
+        return (
+          item.id === closestElement.dataset["id"] &&
+          item.color === closestElement.dataset["color"]
+        );
+      });
+      if (foundItem) {
+        foundItem.quantity = Number(e.currentTarget.value);
         localStorage.setItem("basket", JSON.stringify(basket));
-        quantities[index] =
-          Number(e.currentTarget.value) * promises[index].price; //changer promises. Différent
+        quantities[index] = Number(e.currentTarget.value) * foundItem.price;
       }
       totalQuantity();
       total();
     });
   }
 }
+
 // Effacer un produit
 function deleteProducts() {
   let deletedButton = document.querySelectorAll(".deleteItem");
   for (let index = 0; index < deletedButton.length; index++) {
-    deletedButton[index].addEventListener("click", (e) => {
+    deletedButton[index].addEventListener("click", () => {
       const closestDeleted = deletedButton[index].closest("article");
       closestDeleted.remove();
-      if (
-        //plutôt find (essayer de supprimer le premier puis à nouveau le premier produit)
-        closestDeleted.dataset["id"] === basket[index].id &&
-        closestDeleted.dataset["color"] === basket[index].color
-      ) {
-        basket.splice([index], 1);
+      let foundIndex = basket.findIndex((item) => {
+        return (
+          item.id === closestDeleted.dataset["id"] &&
+          item.color === closestDeleted.dataset["color"]
+        );
+      });
+      if (foundIndex !== -1) {
+        basket.splice(foundIndex, 1);
         localStorage.setItem("basket", JSON.stringify(basket));
-        quantities.splice([index], 1);
+        quantities.splice(foundIndex, 1);
+        totalQuantity();
+        total();
       }
-      totalQuantity();
-      total();
     });
   }
 }
@@ -117,19 +124,27 @@ function total() {
   let changeButton = document.querySelectorAll(".itemQuantity");
   if (quantities.length === 0) {
     for (let index = 0; index < changeButton.length; index++) {
-      quantities.push(changeButton[index].value * promises[index].price); //promises par un argument
-      console.log(promises[index]);
+      quantities.push(changeButton[index].value * promises[index].price);
     }
   }
-  price = quantities.reduce((a, b) => {
+  basket.forEach((item) => {
+    let foundItem = promises.find((product) => {
+      return product._id === item.id;
+    });
+    if (foundItem) {
+      price.push(foundItem.price * item.quantity);
+    }
+  });
+
+  price = price.reduce((a, b) => {
     return +a + +b;
   });
 
   priceElt.innerHTML = price;
 }
-
 // total articles
 function totalQuantity() {
+  // let basket = JSON.parse(localStorage.getItem("basket"));
   let itemsQuantity = document.getElementById("totalQuantity");
 
   quantityTotal = basket.reduce((previousValue, currentValue) => {
