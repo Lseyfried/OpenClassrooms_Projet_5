@@ -1,4 +1,4 @@
-let basket = JSON.parse(localStorage.getItem("basket"));
+let basket = JSON.parse(localStorage.getItem("basket")) || [];
 //Tableau des ids avant envoie de la requête POST
 const products = [];
 //Tableau récupérant les produits du panier avant promiseall
@@ -26,10 +26,10 @@ async function getPromiseAll() {
   Promise.all(promises)
     .then((product) => {
       displayProducts(product);
-      changeQuantity();
-      deleteProducts();
+      changeQuantity(product, quantities);
+      deleteProducts(product);
       totalQuantity();
-      total();
+      total(product, quantities);
     })
 
     .catch((err) => {
@@ -40,7 +40,7 @@ async function getPromiseAll() {
 //affiche les produits sélectionnés
 function displayProducts(productElt) {
   let cartElt = document.getElementById("cart__items");
-  console.log(productElt);
+  // console.log(productElt);
   for (let index = 0; index < productElt.length; index++) {
     cartElt.innerHTML += `<article class="cart__item" data-id="${productElt[index]._id}" data-color="${basket[index].color}">
           <div class="cart__item__img">
@@ -66,36 +66,34 @@ function displayProducts(productElt) {
   }
 }
 
-// change quantity
-function changeQuantity() {
-  console.log(basket);
-  // let itemsQuantity = document.getElementById("totalQuantity");
-  //passer en argument les prix récupérés depuis l'API
+// change la quantité
+function changeQuantity(productElt, quantities) {
   let changeButton = document.querySelectorAll(".itemQuantity");
   for (let index = 0; index < changeButton.length; index++) {
     changeButton[index].addEventListener("change", (e) => {
-      // console.log(quantityPrice);
-      //plusieurs fonctions à mettre
       const closestElement = changeButton[index].closest("article");
-      let foundItem = basket.find((item) => {
-        return (
-          item.id === closestElement.dataset["id"] &&
-          item.color === closestElement.dataset["color"]
-        );
-      });
-      if (foundItem) {
-        foundItem.quantity = Number(e.currentTarget.value);
-        localStorage.setItem("basket", JSON.stringify(basket));
-        quantities[index] = Number(e.currentTarget.value) * foundItem.price;
+      for (let i = 0; i < basket.length; i++) {
+        if (
+          basket[i].id === closestElement.dataset["id"] &&
+          basket[i].color === closestElement.dataset["color"]
+        ) {
+          basket[i].quantity = Number(e.currentTarget.value);
+          localStorage.setItem("basket", JSON.stringify(basket));
+          for (let index = 0; index < quantities.length; index++) {
+            console.log(quantities[index]);
+            quantities[index] =
+              Number(e.currentTarget.value) * productElt[i].price;
+          }
+        }
       }
       totalQuantity();
-      total();
+      total(productElt, quantities);
     });
   }
 }
 
 // Effacer un produit
-function deleteProducts() {
+function deleteProducts(productElt) {
   let deletedButton = document.querySelectorAll(".deleteItem");
   for (let index = 0; index < deletedButton.length; index++) {
     deletedButton[index].addEventListener("click", () => {
@@ -111,32 +109,26 @@ function deleteProducts() {
         basket.splice(foundIndex, 1);
         localStorage.setItem("basket", JSON.stringify(basket));
         quantities.splice(foundIndex, 1);
-        totalQuantity();
-        total();
+        totalQuantity(basket);
+        total(productElt, quantities);
       }
     });
   }
 }
 // //total  prix
-function total() {
+function total(productElt, quantities) {
   let price = [];
   let priceElt = document.getElementById("totalPrice");
   let changeButton = document.querySelectorAll(".itemQuantity");
+
   if (quantities.length === 0) {
     for (let index = 0; index < changeButton.length; index++) {
-      quantities.push(changeButton[index].value * promises[index].price);
+      // console.log(productElt[index].price);
+      quantities.push(changeButton[index].value * productElt[index].price);
     }
   }
-  basket.forEach((item) => {
-    let foundItem = promises.find((product) => {
-      return product._id === item.id;
-    });
-    if (foundItem) {
-      price.push(foundItem.price * item.quantity);
-    }
-  });
 
-  price = price.reduce((a, b) => {
+  price = quantities.reduce((a, b) => {
     return +a + +b;
   });
 
@@ -144,7 +136,6 @@ function total() {
 }
 // total articles
 function totalQuantity() {
-  // let basket = JSON.parse(localStorage.getItem("basket"));
   let itemsQuantity = document.getElementById("totalQuantity");
 
   quantityTotal = basket.reduce((previousValue, currentValue) => {
@@ -152,7 +143,8 @@ function totalQuantity() {
       quantity: previousValue.quantity + currentValue.quantity,
     };
   });
-  itemsQuantity.innerHTML = quantityTotal.quantity; //revoir
+  // console.log(basket);
+  itemsQuantity.innerHTML = quantityTotal.quantity;
 }
 
 //reGex
