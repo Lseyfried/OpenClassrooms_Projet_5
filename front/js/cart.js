@@ -65,7 +65,6 @@ function displayProducts(productElt) {
         </article>`;
   }
 }
-
 // change la quantité
 function changeQuantity(productElt, quantities) {
   let changeButton = document.querySelectorAll(".itemQuantity");
@@ -79,11 +78,9 @@ function changeQuantity(productElt, quantities) {
         ) {
           basket[i].quantity = Number(e.currentTarget.value);
           localStorage.setItem("basket", JSON.stringify(basket));
-          for (let index = 0; index < quantities.length; index++) {
-            console.log(quantities[index]);
-            quantities[index] =
-              Number(e.currentTarget.value) * productElt[i].price;
-          }
+          let quantityChange =
+            Number(e.currentTarget.value) * productElt[index].price;
+          quantities.splice(i, 1, quantityChange);
         }
       }
       totalQuantity();
