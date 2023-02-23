@@ -1,10 +1,6 @@
 let basket = JSON.parse(localStorage.getItem("basket")) || [];
-//Tableau des ids avant envoie de la requête POST
-const products = [];
 //Tableau récupérant les produits du panier avant promiseall
 const promises = [];
-//Tableau récupérant les produits après clique du bouton "Commander"
-const productId = [];
 //Prix total des produits
 let quantities = [];
 //Quantité total des produits
@@ -40,7 +36,6 @@ async function getPromiseAll() {
 //affiche les produits sélectionnés
 function displayProducts(productElt) {
   let cartElt = document.getElementById("cart__items");
-  // console.log(productElt);
   for (let index = 0; index < productElt.length; index++) {
     cartElt.innerHTML += `<article class="cart__item" data-id="${productElt[index]._id}" data-color="${basket[index].color}">
           <div class="cart__item__img">
@@ -91,6 +86,8 @@ function changeQuantity(productElt, quantities) {
 
 // Effacer un produit
 function deleteProducts(productElt) {
+  let itemsQuantity = document.getElementById("totalQuantity");
+  let priceElt = document.getElementById("totalPrice");
   let deletedButton = document.querySelectorAll(".deleteItem");
   for (let index = 0; index < deletedButton.length; index++) {
     deletedButton[index].addEventListener("click", () => {
@@ -106,12 +103,17 @@ function deleteProducts(productElt) {
         basket.splice(foundIndex, 1);
         localStorage.setItem("basket", JSON.stringify(basket));
         quantities.splice(foundIndex, 1);
+        if (basket.length === 0) {
+          priceElt.innerHTML = 0;
+          itemsQuantity.innerHTML = 0;
+        }
         totalQuantity(basket);
         total(productElt, quantities);
       }
     });
   }
 }
+
 // //total  prix
 function total(productElt, quantities) {
   let price = [];
@@ -120,27 +122,25 @@ function total(productElt, quantities) {
 
   if (quantities.length === 0) {
     for (let index = 0; index < changeButton.length; index++) {
-      // console.log(productElt[index].price);
       quantities.push(changeButton[index].value * productElt[index].price);
     }
   }
-
   price = quantities.reduce((a, b) => {
     return +a + +b;
   });
 
   priceElt.innerHTML = price;
 }
+
 // total articles
 function totalQuantity() {
   let itemsQuantity = document.getElementById("totalQuantity");
-
   quantityTotal = basket.reduce((previousValue, currentValue) => {
     return {
       quantity: previousValue.quantity + currentValue.quantity,
     };
   });
-  // console.log(basket);
+
   itemsQuantity.innerHTML = quantityTotal.quantity;
 }
 
@@ -150,18 +150,17 @@ function regexVerification() {
   form.email.addEventListener("change", () => {
     let emailRegExp = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
     let testEmail = emailRegExp.test(form.email.value);
-    let addresmsg = document.getElementById("emailErrorMsg");
+    let emailMsg = document.getElementById("emailErrorMsg");
     if (testEmail) {
-      addresmsg.innerHTML = "Adresse Valide";
+      emailMsg.innerHTML = "Adresse Valide";
     } else {
-      addresmsg.innerHTML = "Adresse Non Valide";
+      emailMsg.innerHTML = "Adresse Non Valide";
     }
   });
   form.firstName.addEventListener("change", () => {
     let firstNameRegExp =
       /^[a-zA-ZàáâäãåąčćęèéêëėįìíîïłńòóôöõøùúûüųūÿýżźñçčšžÀÁÂÄÃÅĄĆČĖĘÈÉÊËÌÍÎÏĮŁŃÒÓÔÖÕØÙÚÛÜŲŪŸÝŻŹÑßÇŒÆČŠŽ∂ð ,.'-]+$/u;
     let testFirstName = firstNameRegExp.test(form.firstName.value);
-
     let firstNameMsg = document.getElementById("firstNameErrorMsg");
     if (testFirstName) {
       firstNameMsg.innerHTML = "Prénom Valide";
@@ -173,11 +172,11 @@ function regexVerification() {
     let lastNameRegExp =
       /^[a-zA-ZàáâäãåąčćęèéêëėįìíîïłńòóôöõøùúûüųūÿýżźñçčšžÀÁÂÄÃÅĄĆČĖĘÈÉÊËÌÍÎÏĮŁŃÒÓÔÖÕØÙÚÛÜŲŪŸÝŻŹÑßÇŒÆČŠŽ∂ð ,.'-]+$/u;
     let testLastName = lastNameRegExp.test(form.lastName.value);
-    let firstNameMsg = document.getElementById("lastNameErrorMsg");
+    let lastNameMsg = document.getElementById("lastNameErrorMsg");
     if (testLastName) {
-      firstNameMsg.innerHTML = "Nom Valide";
+      lastNameMsg.innerHTML = "Nom Valide";
     } else {
-      firstNameMsg.innerHTML = "Nom Non Valide";
+      lastNameMsg.innerHTML = "Nom Non Valide";
     }
   });
   form.address.addEventListener("change", () => {
@@ -193,7 +192,6 @@ function regexVerification() {
   form.city.addEventListener("change", () => {
     let cityRegExp = /^\s*[a-zA-Z]{1}[0-9a-zA-Z][0-9a-zA-Z '-.=#/]*$/;
     let testcity = cityRegExp.test(form.city.value);
-    console.log(testcity);
     let cityMsg = document.getElementById("cityErrorMsg");
     if (testcity) {
       cityMsg.innerHTML = "Ville Valide";
@@ -205,6 +203,11 @@ function regexVerification() {
 
 //Récupérer les variables avant envoie de l'API
 function recoverForm() {
+  let cityMsg = document.getElementById("cityErrorMsg");
+  let addressMsg = document.getElementById("addressErrorMsg");
+  let lastNameMsg = document.getElementById("lastNameErrorMsg");
+  let firstNameMsg = document.getElementById("firstNameErrorMsg");
+  let emailMsg = document.getElementById("emailErrorMsg");
   let form = document.querySelector(".cart__order__form");
   const productId = [];
   form.addEventListener("submit", (e) => {
@@ -224,8 +227,18 @@ function recoverForm() {
       },
       products: productId,
     };
-    // console.log(basket);
-    sendFormToApi(formToPost);
+    if (
+      cityMsg.innerHTML === "Ville Non Valide" ||
+      addressMsg.innerHTML === "Adresse Non Valide" ||
+      lastNameMsg.innerHTML === "Nom Non Valide" ||
+      firstNameMsg.innerHTML === "Prénom Non Valide"
+    ) {
+      alert("Veuillez entrer des valeurs valides dans le formulaire");
+    } else if (formToPost.products.length === 0) {
+      alert("Veuillez sélectionner des produits");
+    } else {
+      sendFormToApi(formToPost);
+    }
   });
 }
 
@@ -238,7 +251,6 @@ function sendFormToApi(productToSend) {
   })
     .then((response) => response.json())
     .then((dataPost) => {
-      // console.log(dataPost);
       const orderId = dataPost.orderId;
       window.location.href = `confirmation.html?orderId=${orderId}`;
     })

@@ -1,3 +1,4 @@
+//récupére les produits de l'API
 async function recoverProducts() {
   const requete = await fetch("http://localhost:3000/api/products", {
     method: "GET",
@@ -6,7 +7,6 @@ async function recoverProducts() {
     alert("Un Problème est survenu.");
   } else {
     let data = await requete.json();
-    console.log(data);
     for (let i = 0; i < data.length; i++) {
       document.getElementById(
         "items"
