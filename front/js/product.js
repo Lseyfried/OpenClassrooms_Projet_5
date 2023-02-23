@@ -38,7 +38,7 @@ function addProductToBasket(product) {
     cart = [];
   }
   for (let index = 0; index < cart.length; index++) {
-    console.log([index]);
+    console.log(index);
     if (
       cart[index].color === colorsElt.value &&
       cart[index].id === product.id
