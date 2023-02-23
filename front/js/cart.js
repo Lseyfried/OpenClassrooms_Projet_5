@@ -237,11 +237,11 @@ function recoverForm() {
       cityMsg.innerHTML === "Ville Non Valide" ||
       addressMsg.innerHTML === "Adresse Non Valide" ||
       lastNameMsg.innerHTML === "Nom Non Valide" ||
-      firstNameMsg.innerHTML === "Prénom Non Valide"
+      firstNameMsg.innerHTML === "Prénom Non Valide" ||
+      formToPost.products.length === 0 ||
+      basket.length === 0
     ) {
-      alert("Veuillez entrer des valeurs valides dans le formulaire");
-    } else if (formToPost.products.length === 0) {
-      alert("Veuillez sélectionner des produits");
+      alert("Veuillez entrer des valeurs valides");
     } else {
       sendFormToApi(formToPost);
     }
