@@ -222,7 +222,6 @@ function recoverForm() {
         productId.push(basket[index].id);
       }
     }
-    console.log(productId);
     const formToPost = {
       contact: {
         firstName: form.firstName.value,
@@ -233,15 +232,16 @@ function recoverForm() {
       },
       products: productId,
     };
+    console.log(formToPost);
     if (
       cityMsg.innerHTML === "Ville Non Valide" ||
       addressMsg.innerHTML === "Adresse Non Valide" ||
       lastNameMsg.innerHTML === "Nom Non Valide" ||
-      firstNameMsg.innerHTML === "Prénom Non Valide" ||
-      formToPost.products.length === 0 ||
-      basket.length === 0
+      firstNameMsg.innerHTML === "Prénom Non Valide"
     ) {
       alert("Veuillez entrer des valeurs valides");
+    } else if (formToPost.products.length === 0 || basket.length === 0) {
+      alert("Veuillez entrer au moins un produit");
     } else {
       sendFormToApi(formToPost);
     }
